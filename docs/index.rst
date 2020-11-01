@@ -7,6 +7,7 @@
    :caption: Contents:
 
    transforms
+   grad
    contributing
    authors
 
