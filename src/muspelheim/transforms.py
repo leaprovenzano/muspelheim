@@ -2,9 +2,11 @@ from abc import ABC, abstractmethod
 from typing import TypeVar, Optional, Union, Generic
 
 import torch
+import numpy as np
 
 InT = TypeVar('InT')
 OutT = TypeVar('OutT')
+TensorApplicable = Union[torch.Tensor, np.ndarray, int, float]
 
 
 class Transform(ABC, Generic[InT, OutT]):
@@ -65,3 +67,40 @@ class Tensorize(Transform[InT, torch.Tensor]):
 
     def __call__(self, x: InT) -> torch.Tensor:
         return torch.tensor(x, dtype=self._dtype, device=self._device)
+
+
+class Normalize(Transform):
+    """Normalize a tensor or array from a fixed mean and std
+
+    Example:
+        >>> import torch
+        >>> from muspelheim.transforms import Normalize
+        >>>
+        >>> transform = Normalize(mean=1.5, std=1.1859)
+        >>> x = torch.linspace(0, 3, 5)
+        >>> transform(x)
+        tensor([-1.2649, -0.6324,  0.0000,  0.6324,  1.2649])
+
+        >>> channel_transform = Normalize(mean=torch.tensor([7.6596, 8.0000, 8.3404]),
+        ...                                 std=torch.tensor([4.8622, 4.8622, 4.8622]))
+        >>> x= torch.linspace(0, 16, 48).reshape(4, 4, 3)
+        >>> y = channel_transform(x)
+        >>> y.shape
+        torch.Size([4, 4, 3])
+
+        >>> y.mean(dim=(0, 1))
+        tensor([-5.1707e-06,  3.7253e-08,  5.3197e-06])
+
+        >>> y.std(dim=(0, 1))
+        tensor([1.0000, 1.0000, 1.0000])
+    """
+
+    def __init__(self, mean: TensorApplicable, std: TensorApplicable):
+        self.mean = mean
+        self.std = std
+
+    def _repr_args(self):
+        return f'mean={self.mean}, std={self.std}'
+
+    def __call__(self, x):
+        return (x - self.mean) / self.std
