@@ -7,6 +7,7 @@ a collection tools and extensions for working with pytorch
 [![travis build](https://img.shields.io/travis/leaprovenzano/muspelheim.svg)](https://travis-ci.com/leaprovenzano/muspelheim)
 [![documentation status](https://readthedocs.org/projects/muspelheim/badge/?version=latest)](https://muspelheim.readthedocs.io/en/latest/?badge=latest)
 [![coverage](https://codecov.io/gh/leaprovenzano/muspelheim/branch/main/graph/badge.svg)](https://codecov.io/gh/leaprovenzano/muspelheim/branch/main/graph/badge.svg)
+
 ------------------------------------------------------------------------
 
 -   *Free software*: MIT license
