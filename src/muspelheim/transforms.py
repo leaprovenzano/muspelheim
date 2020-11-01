@@ -72,6 +72,12 @@ class Tensorize(Transform[InT, torch.Tensor]):
 class Normalize(Transform):
     """Normalize a tensor or array from a fixed mean and std
 
+    Args:
+        mean : may be float, tensor or array. if has dimensions (such as channels for images)
+            must match shape of std
+        std : may be float, tensor or array. if has dimensions (such as channels for images)
+            must match shape of std
+
     Example:
         >>> import torch
         >>> from muspelheim.transforms import Normalize
