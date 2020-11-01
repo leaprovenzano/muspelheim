@@ -110,3 +110,41 @@ class Normalize(Transform):
 
     def __call__(self, x):
         return (x - self.mean) / self.std
+
+
+class Pipeline(Transform):
+    """Pipeline applies a chain of transforms to an input in order.
+
+    Example:
+        >>> import torch
+        >>> import numpy as np
+        >>> from muspelheim.transforms import Normalize, Tensorize, Pipeline
+        >>>
+        >>> pipeline = Pipeline(Tensorize(dtype='float32'), Normalize(mean=-0.34, std=1.75))
+        >>> pipeline
+        Pipeline(Tensorize(dtype=torch.float32, device=cpu), Normalize(mean=-0.34, std=1.75))
+
+        >>> len(pipeline)
+        2
+
+        >>> x = np.array([-3.0, -1.5, .3, .4, 2.1])
+        >>> pipeline(x)
+        tensor([-1.5200, -0.6629,  0.3657,  0.4229,  1.3943])
+    """
+
+    def __init__(self, *transforms):
+        self._transforms = transforms
+
+    def _repr_args(self):
+        return ', '.join(map('{!r}'.format, self._transforms))
+
+    def __len__(self) -> int:
+        return len(self._transforms)
+
+    def __getitem__(self, i):
+        return self._transforms[i]
+
+    def __call__(self, x):
+        for transform in self:
+            x = transform(x)
+        return x
