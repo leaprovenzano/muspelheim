@@ -95,7 +95,7 @@ class Normalize(Transform):
         torch.Size([4, 4, 3])
 
         >>> y.mean(dim=(0, 1))
-        tensor([-5.1707e-06,  3.7253e-08,  5.3197e-06])
+        tensor([-0.00,  0.00,  0.00])
 
         >>> y.std(dim=(0, 1))
         tensor([1.0000, 1.0000, 1.0000])
