@@ -1,0 +1,3 @@
+-r dev.txt
+-r docs.txt
+-r test.txt

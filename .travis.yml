@@ -1,0 +1,20 @@
+language: python
+cache:
+  directories:
+  - "$HOME/.cache/pip"
+python:
+- 3.7
+- 3.8
+- 3.9
+install:
+- pip install -r requirements/test.txt
+- pip install -r requirements/dev.txt
+after_success:
+- pip install codecov
+- pip install .
+script:
+- flake8
+- mypy src/muspelheim --follow-imports=silent --ignore-missing-imports
+- pytest
+after_success:
+- codecov

@@ -1,0 +1,25 @@
+repos:
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v2.7.3
+    hooks:
+    -   id: pyupgrade
+-   repo: https://github.com/ambv/black
+    rev: stable
+    hooks:
+    - id: black
+      args: ['--line-length=100', '--skip-string-normalization', '--target-version=py38']
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    - id: flake8
+      additional_dependencies: [flake8-bugbear, flake8-eradicate, pep8-naming]
+      args: ['--config=setup.cfg']
+    - id: check-json
+    - id: pretty-format-json
+    - id: check-ast
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: 'master'
+    hooks:
+    -   id: mypy
+        args: [--follow-imports=silent, --ignore-missing-imports]
+        exclude: "tests/*"

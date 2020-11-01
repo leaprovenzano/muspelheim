@@ -1,0 +1,7 @@
+feature: ['feature/*', 'feat/*']
+bug: ['fix/*', 'bugfix/*']
+maintenance: ['maintenance/*', 'cleanup/*']
+dependencies: ['dependencies/*', 'deps/*']
+breaking: ['breaking/*', 'major/*']
+enhancement: ['enhancement/*', 'improvement/*']
+documentation: ['docs/*', 'documentation/*']
