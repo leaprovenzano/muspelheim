@@ -1,9 +1,9 @@
 transforms
 ==========
 
-.. currentmodule:: muspelheim
+.. currentmodule:: hearth
 
-.. automodule:: muspelheim.transforms
+.. automodule:: hearth.transforms
    :members:
    :undoc-members:
    :show-inheritance:

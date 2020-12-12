@@ -15,17 +15,17 @@ import sys
 
 sys.path.insert(0, os.path.abspath('../src'))
 
-import muspelheim
+import hearth
 import sphinx
 
 # -- Project information -----------------------------------------------------
 
-project = 'muspelheim'
+project = 'hearth'
 copyright = '2020, Lea Provenzano'
-author = muspelheim.__author__
+author = hearth.__author__
 
 # The full version, including alpha/beta/rc tags
-release = muspelheim.__version__
+release = hearth.__version__
 
 
 def monkeypatch(cls):
@@ -125,8 +125,8 @@ html_theme_options = {
     'color_primary': 'deep-orange',
     'color_accent': 'teal',
     # Set the repo location to get a badge with stats
-    'repo_url': 'https://github.com/leaprovenzano/muspelheim/',
-    'repo_name': 'muspelheim',
+    'repo_url': 'https://github.com/leaprovenzano/hearth/',
+    'repo_name': 'hearth',
     # Visible levels of the global TOC; -1 means unlimited
     'globaltoc_depth': 2,
     # If False, expand all TOC entries

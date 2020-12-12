@@ -2,7 +2,7 @@
 # Useful for testing that the basics work before anything else exists.
 import re
 
-import muspelheim
+import hearth
 
 
 def is_valid_semver(version: str) -> bool:
@@ -13,4 +13,4 @@ def is_valid_semver(version: str) -> bool:
 
 
 def test_version_is_valid_semver():
-    assert is_valid_semver(muspelheim.__version__)
+    assert is_valid_semver(hearth.__version__)

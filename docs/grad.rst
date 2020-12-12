@@ -1,9 +1,9 @@
 grad
 ====
 
-.. currentmodule:: muspelheim
+.. currentmodule:: hearth
 
-.. automodule:: muspelheim.grad
+.. automodule:: hearth.grad
    :members:
    :undoc-members:
    :show-inheritance:

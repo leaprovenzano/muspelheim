@@ -18,7 +18,7 @@ include:
 -   Your operating system name and version.
 -   Any details about your local setup that might be helpful in
     troubleshooting. This must include your version of python and
-    muspelheim
+    hearth
 -   A minimal example that will reproduce the bug.
 
 ### Suggest featues:
@@ -47,16 +47,16 @@ how to go about making a PR:
 
 ### Setting up for local development:
 
-1.  Fork the muspelheim repo on GitHub.
+1.  Fork the hearth repo on GitHub.
 
 2.  Clone your fork locally:
 
-        $ git clone git@github.com:your_name_here/muspelheim.git
+        $ git clone git@github.com:your_name_here/hearth.git
 
 3.  Install your local copy into a virtualenv:
 
-        $ python3 -m muspelheim/env
-        $ cd muspelheim
+        $ python3 -m hearth/env
+        $ cd hearth
         $ source env/bin/activate
         $ pip install -e .
 
@@ -87,4 +87,4 @@ how to go about making a PR:
     reviewers to read and should always link to the original issue.
 -   All features and bug fixes must have a user friendl
 
-  [issues]: https://github.com/leaprovenzano/muspelheim/issues
+  [issues]: https://github.com/leaprovenzano/hearth/issues

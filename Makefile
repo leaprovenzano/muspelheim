@@ -51,7 +51,7 @@ clean-test: clean-pyc## remove test and coverage artifacts
 	rm -fr .pytest_cache
 
 lint: ## check style with flake8
-	flake8 src/muspelheim tests
+	flake8 src/hearth tests
 
 test: ## run tests quickly with the default Python
 	pytest

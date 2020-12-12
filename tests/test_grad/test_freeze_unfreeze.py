@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 import pytest
-from muspelheim.grad import freeze, unfreeze
+from hearth.grad import freeze, unfreeze
 
 
 def py_model():

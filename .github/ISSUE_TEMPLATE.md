@@ -1,4 +1,4 @@
-* muspelheim version:
+* hearth version:
 * Python version:
 * Operating System:
 

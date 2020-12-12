@@ -1,6 +1,6 @@
 .. include:: readme.rst
 
-.. currentmodule:: muspelheim
+.. currentmodule:: hearth
 
 .. toctree::
    :maxdepth: 2

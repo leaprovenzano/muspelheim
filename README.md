@@ -1,17 +1,17 @@
-# muspelheim
+# hearth
 
 a collection tools and extensions for working with pytorch
 
 ----
-[![pypi version](https://img.shields.io/pypi/v/muspelheim.svg)](https://pypi.python.org/pypi/muspelheim)
-[![travis build](https://img.shields.io/travis/leaprovenzano/muspelheim.svg)](https://travis-ci.com/leaprovenzano/muspelheim)
-[![documentation status](https://readthedocs.org/projects/muspelheim/badge/?version=latest)](https://muspelheim.readthedocs.io/en/latest/?badge=latest)
-[![coverage](https://codecov.io/gh/leaprovenzano/muspelheim/branch/main/graph/badge.svg)](https://codecov.io/gh/leaprovenzano/muspelheim/branch/main/graph/badge.svg)
+[![pypi version](https://img.shields.io/pypi/v/hearth.svg)](https://pypi.python.org/pypi/hearth)
+[![travis build](https://img.shields.io/travis/leaprovenzano/hearth.svg)](https://travis-ci.com/leaprovenzano/hearth)
+[![documentation status](https://readthedocs.org/projects/hearth/badge/?version=latest)](https://hearth.readthedocs.io/en/latest/?badge=latest)
+[![coverage](https://codecov.io/gh/leaprovenzano/hearth/branch/main/graph/badge.svg)](https://codecov.io/gh/leaprovenzano/hearth/branch/main/graph/badge.svg)
 
 ------------------------------------------------------------------------
 
 -   *Free software*: MIT license
--   *Documentation*: [docs](https://muspelheim.readthedocs.io)
+-   *Documentation*: [docs](https://hearth.readthedocs.io)
 -   *Supported Python Versions*: >=3.7
 
 ------------------------------------------------------------------------
@@ -21,11 +21,11 @@ a collection tools and extensions for working with pytorch
 
 Install the latest stable version with pip:
 
-    $ pip install muspelheim
+    $ pip install hearth
 
 ---
 ## Checkout the docs:
 
-It's best to checkout the [docs](https://muspelheim.readthedocs.io). There you'll find detailed
-documentation of muspelheim's features and lots of examples of how to
+It's best to checkout the [docs](https://hearth.readthedocs.io). There you'll find detailed
+documentation of hearth's features and lots of examples of how to
 use them.
