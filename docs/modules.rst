@@ -1,9 +1,11 @@
 modules
 =======
+.. currentmodule:: hearth.modules
 
-.. currentmodule:: hearth
+.. autosummary::
+    :toctree: generated
+    :nosignatures:
+    :template: classtemplate.rst
 
-.. automodule:: hearth.modules
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    BaseModule
+    Residual
