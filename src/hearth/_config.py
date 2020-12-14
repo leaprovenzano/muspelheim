@@ -28,9 +28,10 @@ class SupportsConfig(ABC):
         if cls is SupportsConfig:
             try:
                 return (
-                    callable(cls.config)
+                    hasattr(cls, 'config')
+                    and callable(cls.config)
+                    and hasattr(cls, 'from_config')
                     and callable(cls.from_config)
-                    and callable(cls.extended_config)
                 )
             except AttributeError:
                 return False
@@ -49,7 +50,6 @@ def _parse_args(args):  # noqa: C901
         except TypeError:
             if isinstance(arg, nn.Module):
                 return extended_config(arg)
-            raise
         return arg
 
     for name, arg in args:
@@ -124,14 +124,14 @@ def extended_config(obj):
 
 @singledispatch
 def config(obj):
-    if issubclass(obj.__class__, SupportsConfig):
+    if hasattr(obj, 'config'):
         return obj.config()
     return NotImplemented
 
 
 @config.register(nn.Module)
 def module_config(mod):
-    if issubclass(mod.__class__, SupportsConfig):
+    if hasattr(mod, 'config'):
         return mod.config()
     return gather_params_from_instance(mod)
 
