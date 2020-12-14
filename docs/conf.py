@@ -91,6 +91,7 @@ html_theme = 'sphinx_material'
 napoleon_numpy_docstring = False
 
 autosummary_generate = True
+autodoc_member_order = 'bysource'
 
 
 autoclass_content = "class"  # include both class docstring and __init__
@@ -99,6 +100,7 @@ autodoc_default_flags = [
     "members",
     "inherited-members",
     "show-inheritance",
+    "undoc-members",
 ]
 
 master_doc = 'index'
