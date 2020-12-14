@@ -133,7 +133,7 @@ class SubsequenceSampler(Sampler):
         name = self.__class__.__name__
         args = (
             f'dataset={self.dataset},'
-            f'batch_size={self.batch_size},'
-            f'drop_shortest={self.drop_shortest}'
+            f' batch_size={self.batch_size},'
+            f' drop_shortest={self.drop_shortest}'
         )
         return f'{name}({args})'
