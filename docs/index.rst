@@ -3,14 +3,24 @@
 .. currentmodule:: hearth
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :caption: API:
 
    modules
-   grad
+
+.. autosummary::
+   :toctree: _autosummary
+
    transforms
+   samplers
+   grad
+
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Other Stuff:
+
    contributing
-   authors
 
 
 

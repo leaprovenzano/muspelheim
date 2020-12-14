@@ -1,3 +1,5 @@
+"""transforms are basic operations that can be composed as part of a `Pipeline`_
+"""
 from abc import ABC, abstractmethod
 from typing import TypeVar, Optional, Union, Generic
 
