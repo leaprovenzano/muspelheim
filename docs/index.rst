@@ -6,8 +6,9 @@
    :maxdepth: 2
    :caption: Contents:
 
-   transforms
+   modules
    grad
+   transforms
    contributing
    authors
 

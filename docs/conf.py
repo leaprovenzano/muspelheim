@@ -62,7 +62,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.autosectionlabel',
     'sphinx_autodoc_typehints',
-    'm2r',
+    'm2r2',
 ]
 
 
