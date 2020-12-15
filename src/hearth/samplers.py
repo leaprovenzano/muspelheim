@@ -1,10 +1,12 @@
 """Samplers for sampling batch indices (or example indexes) for use with \
 `torch.utils.data.DataLoader\
-<https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader>`_
+ <https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader>`_
 """
 from typing import Sized, List, Iterator
 import torch
-from torch.utils.data import Sampler
+from torch.utils.data import Sampler, DataLoader
+
+from more_itertools import windowed
 
 
 class SubsequenceSampler(Sampler):
@@ -141,3 +143,93 @@ class SubsequenceSampler(Sampler):
             f' drop_shortest={self.drop_shortest}'
         )
         return f'{name}({args})'
+
+
+class BatchSubsequenceSampler(torch.utils.data.Sampler):
+    """a batch sampler that generates nested ordered subsequence indexes aligned on batch.
+
+    output indexes from this sampler will be  lists of shape [batch_size, sequence_lengh].
+
+    Note:
+        Internally this uses :class:`SubsequenceSampler` to generate batches and will always drop
+        the short sequence if the length of the dataset is not divisible by `sequence_length`.
+
+    Args:
+        dataset: something we can call ``len()`` on that represents the size of the dataset being
+            batched. It can be the dataset itself, a tensor, list, range etc...
+        batch_size: the desired batch size
+        sequence_length: desired sequence length
+        drop_last: if ``True`` drop the batch if less than batch size.
+
+    Example:
+        >>> import torch
+        >>> from hearth.samplers import SubsequenceSampler
+        >>> _ = torch.manual_seed(0)
+        >>> sampler = BatchSubsequenceSampler(range(113), batch_size=4, sequence_length=5)
+        >>> len(sampler)
+        6
+
+        generate batch indexes for sequental sequences of shape (`batch_size`, `sequence_length`)
+        the last batch may contain less sequences, but sequence lengths will never change.
+
+        >>> for batch_idxes in sampler:
+        ...    print(batch_idxes)
+        [[20, 21, 22, 23, 24], [10, 11, 12, 13, 14], [55, 56, 57, 58, 59], [30, 31, 32, 33, 34]]
+        [[5, 6, 7, 8, 9], [60, 61, 62, 63, 64], [80, 81, 82, 83, 84], [15, 16, 17, 18, 19]]
+        [[0, 1, 2, 3, 4], [90, 91, 92, 93, 94], [103, 104, 105, 106, 107], [40, 41, 42, 43, 44]]
+        [[85, 86, 87, 88, 89], [50, 51, 52, 53, 54], [35, 36, 37, 38, 39], [75, 76, 77, 78, 79]]
+        [[45, 46, 47, 48, 49], [65, 66, 67, 68, 69], [70, 71, 72, 73, 74], [108, 109, 110, 111, 112]]
+        [[98, 99, 100, 101, 102], [25, 26, 27, 28, 29]]
+    """  # noqa : E501
+
+    @classmethod
+    def build_dataloader(
+        cls,
+        dataset: Sized,
+        batch_size: int,
+        sequence_length: int,
+        drop_last: bool = False,
+        **kwargs,
+    ) -> DataLoader:
+        """creates a new DataLoader using BatchSubsequenceSampler.
+
+        Note:
+            extra keyword arguments will be passed to \
+            `torch.utils.data.DataLoader\
+                <https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader>`_
+
+        Args:
+            dataset: actual dataset you'd like to use, this dataset should support nested
+                multi-indexing, `torch.utils.dataset.TensorDataset` works just fine
+            batch_size: the desired batch size for the sequences
+            sequence_length: desired sequence length for subsequences
+            drop_last: If true drop the last short batch. Defaults to True.
+        """
+        n_samples = len(dataset)
+        # TODO: check dataset to ensure we can tolerate this kind of batch
+        sampler = cls(
+            range(n_samples),
+            batch_size=batch_size,
+            sequence_length=sequence_length,
+            drop_last=drop_last,
+        )
+        return DataLoader(dataset, batch_sampler=sampler, **kwargs)  # type: ignore
+
+    def __init__(
+        self, dataset: Sized, batch_size: int, sequence_length: int, drop_last: bool = False
+    ):
+        self.subseq_sampler = SubsequenceSampler(
+            dataset, batch_size=sequence_length, drop_shortest=True
+        )
+        self.batch_size = batch_size
+        self.drop_last = drop_last
+
+    def __len__(self) -> int:
+        n = len(self.subseq_sampler)
+        return (n // self.batch_size) + ((n % self.batch_size) > 0 and not self.drop_last)
+
+    def __iter__(self) -> Iterator[List[List[int]]]:
+        for sequences in windowed(self.subseq_sampler, self.batch_size, step=self.batch_size):
+            seq_batch: List[List[int]] = list(filter(lambda x: x, sequences))  # type: ignore
+            if len(seq_batch) == self.batch_size or not self.drop_last:
+                yield seq_batch
