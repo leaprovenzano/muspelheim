@@ -14,7 +14,8 @@ class SubsequenceSampler(Sampler):
     window that sequence into multiple subsequences and shuffle those. Additionally
     when batch_size is not divisible by dataset length we choose a different short sequence
     on each iteration which means batches are not always starting and ending at the same
-    position.
+    position. The shortest batch will always be last to comply with expected behavior from
+    other batchers.
 
     Args:
         dataset: something we can call ``len()`` on that represents the size of the dataset being
@@ -43,19 +44,19 @@ class SubsequenceSampler(Sampler):
         >>> for batch in sampler:
         ...     print(batch)
         [11, 12, 13, 14]
-        [0, 1, 2]
         [7, 8, 9, 10]
         [3, 4, 5, 6]
+        [0, 1, 2]
 
 
         between runs we shuffle and choose a new short batch:
 
         >>> for batch in sampler:
         ...     print(batch)
-        [12, 13, 14]
         [8, 9, 10, 11]
         [0, 1, 2, 3]
         [4, 5, 6, 7]
+        [12, 13, 14]
 
 
         when ``drop_shortest=True`` the randomly chosen short batch will be dropped...
@@ -111,16 +112,19 @@ class SubsequenceSampler(Sampler):
 
         return lengths
 
-    def __iter__(self) -> Iterator[List[int]]:
+    def _batches(self) -> Iterator[List[int]]:
         total_samples = len(self.dataset)
         batches = torch.split_with_sizes(
             torch.arange(total_samples), self._get_lengths(total_samples)
         )
-        batch_idxes = torch.randperm(len(batches))
-        for i in batch_idxes:
-            batch = batches[i]
+        sort_keys = torch.randperm(len(batches)).tolist()
+        # here we ensure that the shortest batch is last
+        yield from sorted([batches[i].tolist() for i in sort_keys], key=len, reverse=True)
+
+    def __iter__(self) -> Iterator[List[int]]:
+        for batch in self._batches():
             if not self.drop_shortest or (len(batch) == self.batch_size):
-                yield batch.tolist()
+                yield batch
 
     def __len__(self) -> int:
         n = len(self.dataset)
