@@ -1,2 +1,2 @@
 from .base import BaseModule
-from .wrappers import Residual
+from .wrappers import Residual, ReZero
