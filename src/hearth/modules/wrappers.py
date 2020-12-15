@@ -30,4 +30,48 @@ class Residual(BaseModule):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """forward padd for ``Residual`` wrapper."""
         y = self.block(x)
-        return y + x
+        return x + y
+
+
+class ReZero(Residual):
+    """Implements ReZero residual connection around a block with dropout (as in transformer\
+     implementation).
+
+    **Reference**:
+        `Bachlechner et al: ReZero is All You Need: Fast Convergence at Large Depth
+        <https://arxiv.org/abs/2003.04887>`_
+
+    Example:
+        >>> import torch
+        >>> from hearth.modules import ReZero
+        >>>
+        >>> transformation = nn.Sequential(nn.Linear(10, 10),
+        ...                                nn.ReLU(),
+        ...                                nn.Dropout(.1),
+        ...                                nn.Linear(10, 10)
+        ...                                )
+        >>> re_zero = ReZero(transformation, dropout=.1)
+        >>>
+        >>> x = torch.normal(0, 1, size=(5, 10))
+        >>> y = re_zero(x)
+        >>> y.shape
+        torch.Size([5, 10])
+
+        since ``re_zero``'s weight parameter has not actually been trained ``y`` its going to be
+        equal to ``x`` and nothing from the transformation will be added to the input...
+        as training goes on this should change.
+
+        >>> (y == x).all()
+        tensor(True)
+    """
+
+    def __init__(self, block: nn.Module, dropout: float = 0.0):
+        super().__init__(block=block)
+        self.dropout = nn.Dropout(dropout)
+        self.res_weight = nn.Parameter(torch.tensor([0.0]))
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """forward for ReZero."""
+        y = self.block(x)
+        y = y * self.res_weight
+        return x + self.dropout(y)

@@ -30,3 +30,12 @@ Residual
     :undoc-members:
 
 ----
+
+ReZero
+------
+
+.. autoclass:: ReZero
+    :members:
+    :undoc-members:
+
+----
