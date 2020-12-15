@@ -10,6 +10,7 @@
 .. autosummary::
    :toctree: _autosummary
 
+   activations
    transforms
    samplers
    grad
