@@ -11,6 +11,7 @@
    :toctree: _autosummary
 
    activations
+   metrics
    transforms
    samplers
    grad
