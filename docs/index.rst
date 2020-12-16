@@ -16,6 +16,10 @@
    samplers
    grad
 
+.. toctree::
+
+   callbacks
+
 
 
 .. toctree::

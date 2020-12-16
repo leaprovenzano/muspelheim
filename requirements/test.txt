@@ -2,3 +2,4 @@ pytest
 coverage
 hypothesis
 pytest-cov
+pytest-mock
