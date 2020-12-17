@@ -76,7 +76,7 @@ class Loop:
         self.callbacks.on_backward_end(self)
 
     def forward(self, *args, **kwargs):
-        with self.get_grad_context():
+        with self.grad_context():
             return self.model(*args, **kwargs)
 
     def handle_batch(self, batch):
@@ -98,10 +98,10 @@ class Loop:
         self.n_batches = len(batches)
         self.batches_seen = 0
         for batch in batches:
-            self.on_batch_start(self)
+            self.callbacks.on_batch_start(self)
             self.handle_batch(batch)
             self.batches_seen += 1
-            self.on_batch_end(self)
+            self.callbacks.on_batch_end(self)
 
     def handle_stage(self, stage, batches):
         self.stage = stage
@@ -125,6 +125,7 @@ class Loop:
             for stage, batches in zip(self.stages, (train, val)):
                 self.handle_stage(stage, batches)
             self.callbacks.on_epoch_end(self)
+            self.epoch += 1
 
     def __repr__(self) -> str:
         return (
