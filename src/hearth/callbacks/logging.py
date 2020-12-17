@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from hearth.callbacks import Callback
 
-_default_batch_fmt = (
+DEFAULT_BATCH_FMT = (
     'epoch: {loop.epoch} stage: [{loop.stage}]'
     ' batch: {loop.batches_seen}/{loop.n_batches}'
     ' loss: {loop.loss:0.4}'
@@ -11,8 +11,17 @@ _default_batch_fmt = (
 
 @dataclass
 class PrintLogger(Callback):
+    """a very simple logging callback that just prints stuff to sdout.
 
-    batch_format: str = _default_batch_fmt
+    Args:
+        batch_format: format string which will printed (single line) for each batch
+            and will passed a single argument ``loop``. Defaults to \
+            `hearth.callbacks.logging.DEFAULT_BATCH_FMT`.
+        epoch_delim: single char delimiter that will be used to seperate epochs. Defaults to ``-``.
+        epoch_delim_width: width of epoch delimiter. Defaults to 80.
+    """
+
+    batch_format: str = DEFAULT_BATCH_FMT
     epoch_delim: str = '-'
     epoch_delim_width: int = 80
 
