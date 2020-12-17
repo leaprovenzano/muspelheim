@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from callbacks import Callback
+from hearth.callbacks import Callback
 
 _default_batch_fmt = (
     'epoch: {loop.epoch} stage: [{loop.stage}]'
