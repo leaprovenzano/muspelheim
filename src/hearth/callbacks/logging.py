@@ -5,7 +5,7 @@ _default_batch_fmt = (
     'epoch: {loop.epoch} stage: [{loop.stage}]'
     ' batch: {loop.batches_seen}/{loop.n_batches}'
     ' loss: {loop.loss:0.4}'
-    ' metric: {loop.metric: 0.4}'
+    ' metric: {loop.metric:0.4}'
 )
 
 
