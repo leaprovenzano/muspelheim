@@ -125,3 +125,12 @@ class Loop:
             for stage, batches in zip(self.stages, (train, val)):
                 self.handle_stage(stage, batches)
             self.callbacks.on_epoch_end(self)
+
+    def __repr__(self) -> str:
+        return (
+            f'{self.__class__.__name__}(model={self.model},'
+            f' optimizer={self.optimizer}'
+            f' loss_fn={self.loss_fn}'
+            f' metric_fn={self.metric_fn}'
+            f' callbacks={self.callbacks})'
+        )
