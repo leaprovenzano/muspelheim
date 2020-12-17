@@ -1,4 +1,4 @@
-from typing import Sequence, Union
+from typing import Union
 
 
 class Callback:
@@ -91,7 +91,7 @@ class Callback:
 class CallbackManager(Callback):
     """Manages multiple callbacks and calls them in order."""
 
-    def __init__(self, *callbacks: Sequence[Callback]):
+    def __init__(self, *callbacks: Callback):
         self._callbacks = []
         for callback in callbacks:
             if not isinstance(callback, Callback):
