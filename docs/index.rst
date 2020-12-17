@@ -12,6 +12,7 @@
 
    activations
    metrics
+   loop
    transforms
    samplers
    grad
