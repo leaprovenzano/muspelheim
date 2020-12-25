@@ -28,5 +28,17 @@ CallbackManager
 
 ----
 
+PrintLogger
+-----------
+
+.. autoclass:: PrintLogger
+    :members:
+    :no-undoc-members:
+    :no-inherited-members:
+
+
+----
+
+
 
 
