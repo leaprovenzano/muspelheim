@@ -4,8 +4,8 @@ from hearth.callbacks import Callback
 DEFAULT_BATCH_FMT = (
     'epoch: {loop.epoch} stage: [{loop.stage}]'
     ' batch: {loop.batches_seen}/{loop.n_batches}'
-    ' loss: {loop.loss:0.4}'
-    ' metric: {loop.metric:0.4}'
+    ' loss: {loop.loss:0.4f}'
+    ' metric: {loop.metric:0.4f}'
 )
 
 
@@ -29,10 +29,10 @@ class PrintLogger(Callback):
         >>> from hearth.callbacks import PrintLogger
         >>> from hearth.metrics import BinaryAccuracy
         >>>
-        >>> train = TensorDataset(torch.normal(0, 2, size=(500, 64)),
-        ...                       torch.randint(2, size=(500, 1))*1.0)
-        >>> val = TensorDataset(torch.normal(0, 2, size=(300, 64)),
-        ...                     torch.randint(2, size=(300, 1))*1.0)
+        >>> train = TensorDataset(torch.normal(0, 2, size=(5000, 64)),
+        ...                       torch.randint(2, size=(5000, 1))*1.0)
+        >>> val = TensorDataset(torch.normal(0, 2, size=(3000, 64)),
+        ...                     torch.randint(2, size=(3000, 1))*1.0)
         >>>
         >>> train_batches = DataLoader(train, batch_size=32, shuffle=True, drop_last=False)
         >>> val_batches = DataLoader(val, batch_size=32, shuffle=True, drop_last=False)
@@ -45,12 +45,12 @@ class PrintLogger(Callback):
         ...        metric_fn = BinaryAccuracy(),
         ...        callbacks= [PrintLogger()]
         ...       )
-        >>> loop(train_batches, val_batches, 2)
-        epoch: 0 stage: [train] batch: 16/16 loss: 0.71 metric: 0.494875
-        epoch: 0 stage: [val] batch: 10/10 loss: 0.7216 metric: 0.4567312
+        >>> loop(train_batches, val_batches, 2) # doctest: +SKIP
+        epoch: 0 stage: [train] batch: 157/157 loss: 0.7036 metric: 0.5054
+        epoch: 0 stage: [val] batch: 94/94 loss: 0.7036 metric: 0.4933
         --------------------------------------------------------------------------------
-        epoch: 1 stage: [train] batch: 16/16 loss: 0.6569 metric: 0.6029312
-        epoch: 1 stage: [val] batch: 10/10 loss: 0.7304 metric: 0.4667312
+        epoch: 1 stage: [train] batch: 157/157 loss: 0.6799 metric: 0.5660
+        epoch: 1 stage: [val] batch: 94/94 loss: 0.7097 metric: 0.4860
         --------------------------------------------------------------------------------
     """
 
@@ -62,7 +62,7 @@ class PrintLogger(Callback):
         self._end_cursor = None
 
     def print_msg(self, msg: str):
-        print(msg, end=self._end_cursor)
+        print(msg, end=self._end_cursor, flush=True, sep='')
 
     def get_batch_msg(self, loop) -> str:
         return self.batch_format.format(loop=loop)
@@ -71,7 +71,7 @@ class PrintLogger(Callback):
         print(self.epoch_delim * self.epoch_delim_width)
 
     def on_batch_start(self, loop):
-        if loop.n_batches and (loop.batches_seen == loop.n_batches):
+        if loop.n_batches and (loop.batches_seen + 1 == loop.n_batches):
             self._end_cursor = None
         else:
             self._end_cursor = '\r'
@@ -81,4 +81,3 @@ class PrintLogger(Callback):
 
     def on_stage_end(self, loop):
         self._end_cursor = None
-        print()
