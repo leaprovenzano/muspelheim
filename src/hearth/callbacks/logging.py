@@ -19,6 +19,39 @@ class PrintLogger(Callback):
             `hearth.callbacks.logging.DEFAULT_BATCH_FMT`.
         epoch_delim: single char delimiter that will be used to seperate epochs. Defaults to ``-``.
         epoch_delim_width: width of epoch delimiter. Defaults to 80.
+
+    Example:
+        >>> import torch
+        >>> from torch import nn
+        >>> _ = torch.manual_seed(0)
+        >>> from torch.utils.data import TensorDataset, DataLoader
+        >>> from hearth.loop import Loop
+        >>> from hearth.callbacks import PrintLogger
+        >>> from hearth.metrics import BinaryAccuracy
+        >>>
+        >>> train = TensorDataset(torch.normal(0, 2, size=(500, 64)),
+        ...                       torch.randint(2, size=(500, 1))*1.0)
+        >>> val = TensorDataset(torch.normal(0, 2, size=(300, 64)),
+        ...                     torch.randint(2, size=(300, 1))*1.0)
+        >>>
+        >>> train_batches = DataLoader(train, batch_size=32, shuffle=True, drop_last=False)
+        >>> val_batches = DataLoader(val, batch_size=32, shuffle=True, drop_last=False)
+        >>>
+        >>> model = nn.Sequential(nn.Linear(64, 128), nn.ReLU(), nn.Linear(128, 1), nn.Sigmoid())
+        >>>
+        >>> loop = Loop(model=model,
+        ...         optimizer=torch.optim.AdamW(model.parameters(), lr=0.001),
+        ...        loss_fn = nn.BCELoss(),
+        ...        metric_fn = BinaryAccuracy(),
+        ...        callbacks= [PrintLogger()]
+        ...       )
+        >>> loop(train_batches, val_batches, 2)
+        epoch: 0 stage: [train] batch: 16/16 loss: 0.71 metric: 0.494875
+        epoch: 0 stage: [val] batch: 10/10 loss: 0.7216 metric: 0.4567312
+        --------------------------------------------------------------------------------
+        epoch: 1 stage: [train] batch: 16/16 loss: 0.6569 metric: 0.6029312
+        epoch: 1 stage: [val] batch: 10/10 loss: 0.7304 metric: 0.4667312
+        --------------------------------------------------------------------------------
     """
 
     batch_format: str = DEFAULT_BATCH_FMT
