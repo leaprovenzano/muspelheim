@@ -39,6 +39,25 @@ PrintLogger
 
 ----
 
+ClipGradNorm
+------------
+
+.. autoclass:: ClipGradNorm
+    :members:
+    :no-undoc-members:
+    :no-inherited-members:
 
 
+----
 
+
+ClipGradValue
+-------------
+
+.. autoclass:: ClipGradValue
+    :members:
+    :no-undoc-members:
+    :no-inherited-members:
+
+
+----
