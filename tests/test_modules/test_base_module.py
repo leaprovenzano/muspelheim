@@ -1,6 +1,7 @@
 import pytest
 import torch
 from torch import nn
+from hearth.grad import freeze
 from hearth.modules import BaseModule
 
 
@@ -44,3 +45,16 @@ def test_script():
     scripted_y = scripted(x)
     torch.testing.assert_allclose(scripted_y, model_y)
     assert scripted_y.requires_grad == model_y.requires_grad
+
+
+def test_trainable_parameters():
+    model = Dummy(4, 5, 2)
+    freeze(model.lin1)
+    assert not model.lin1.weight.requires_grad
+    assert not model.lin1.bias.requires_grad
+
+    params = list(model.trainable_parameters())
+    assert len(params) == 2
+    assert all(p.requires_grad for p in params)
+    assert (params[0] == model.lin2.weight).all()
+    assert (params[1] == model.lin2.bias).all()

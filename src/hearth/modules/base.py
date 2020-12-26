@@ -1,6 +1,7 @@
+from typing import Iterator
 import torch
 from torch import nn
-from hearth.grad import freeze, unfreeze
+from hearth.grad import freeze, unfreeze, trainable_parameters
 
 
 class BaseModule(nn.Module):
@@ -19,3 +20,7 @@ class BaseModule(nn.Module):
         with torch.jit.optimized_execution(True):
             scripted = torch.jit.script(self)
         return scripted
+
+    def trainable_parameters(self) -> Iterator[nn.Parameter]:
+        """yields trainable parameters from this model."""
+        yield from trainable_parameters(self)
