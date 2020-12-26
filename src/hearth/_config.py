@@ -1,10 +1,9 @@
 from abc import ABC, abstractclassmethod
 from copy import deepcopy
 from functools import singledispatch
-
 import inspect
+from inspect import Parameter
 from torch import nn
-import json
 import functools
 import importlib
 
@@ -42,33 +41,32 @@ def import_cls(name: str, module: str, **kwargs):
     return getattr(importlib.import_module(module), name)
 
 
-def _parse_args(args):  # noqa: C901
+def _parse_args(args, signature):  # noqa: C901
     def parse_arg(arg):
-        try:
-            # ensure its jsonable
-            json.dumps(arg)
-        except TypeError:
-            if isinstance(arg, nn.Module):
-                return extended_config(arg)
+        if isinstance(arg, nn.Module):
+            return extended_config(arg)
         return arg
 
     for name, arg in args:
-        if name == 'kwargs':
+        sig_param = signature.parameters[name]
+        if sig_param.kind == Parameter.VAR_POSITIONAL:
+            yield f'*{name}', [parse_arg(a) for a in arg]
+
+        elif sig_param.kind == Parameter.VAR_KEYWORD:
             yield from ((k, parse_arg(v)) for k, v in arg.items())
-        elif name == 'args':
-            yield name, [parse_arg(a) for a in arg]
+
         else:
             yield name, parse_arg(arg)
 
 
 def _init_wrapper(init_fn):
     def init(self, *args, **kwargs):
-
-        bound = inspect.signature(self.__class__).bind(*args, **kwargs)
+        sig = inspect.signature(self.__class__)
+        bound = sig.bind(*args, **kwargs)
         bound.apply_defaults()
         if not hasattr(self, '__config__'):
             self.__config__ = {}
-            for k, v in _parse_args(bound.arguments.items()):
+            for k, v in _parse_args(bound.arguments.items(), sig):
                 if k not in self.__config__:
                     self.__config__[k] = v
 
@@ -85,7 +83,11 @@ def from_config(cls, config):
         return x
 
     config = deepcopy(config)
-    args = config.pop('args', [])
+    varargs = list(filter(lambda x: x.startswith('*'), config))
+    if varargs:
+        args = config.pop(varargs[0])
+    else:
+        args = []
     return cls(*map(load_item, args), **{k: load_item(v) for k, v in config.items()})
 
 
@@ -177,4 +179,4 @@ def handle_identity(mod):
 
 @config.register(nn.Sequential)
 def handle_sequential(mod):
-    return {'args': [extended_config(m) for m in mod]}
+    return {'*args': [extended_config(m) for m in mod]}
