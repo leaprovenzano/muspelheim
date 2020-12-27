@@ -40,11 +40,17 @@ class ImprovementMonitor(Callback):
             event = None
             if self._is_improvement(this_value, self._last_best):
                 event = Improvement(
-                    self.field, steps=steps, best=this_value, last_best=self._last_best
+                    self.field,
+                    stage=self.stage,
+                    steps=steps,
+                    best=this_value,
+                    last_best=self._last_best,
                 )
                 self._best_step = loop.epoch
                 self._last_best = this_value
             elif steps > self.stagnant_after:
-                event = Stagnation(field=self.field, steps=steps, best=self._last_best)
+                event = Stagnation(
+                    field=self.field, stage=self.stage, steps=steps, best=self._last_best
+                )
             if event:
                 loop.fire(event)
