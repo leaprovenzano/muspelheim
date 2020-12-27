@@ -24,9 +24,9 @@ class ImprovementMonitor(Callback):
     stagnant_after: int = 1
 
     def __post_init__(self):
-        if self.improvement_on not in ('ge', 'lt'):
+        if self.improvement_on not in ('gt', 'lt'):
             raise ValueError(
-                f'improvement_on must be one of ["ge", "lt"] but got {self.improvement_on}'
+                f'improvement_on must be one of ["gt", "lt"] but got {self.improvement_on}'
             )
         self._get_value = partial(dotted_attrgetter, self.field)
         self._is_improvement = getattr(operator, self.improvement_on)
