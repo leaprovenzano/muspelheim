@@ -71,3 +71,13 @@ ImprovementMonitor
     :no-inherited-members:
 
 ----
+
+ModelCheckpoint
+---------------
+
+.. autoclass:: ModelCheckpoint
+    :members:
+    :no-undoc-members:
+    :no-inherited-members:
+
+----
