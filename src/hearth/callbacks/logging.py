@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from hearth.callbacks import Callback
+from hearth.events import Event
 
 DEFAULT_BATCH_FMT = (
     'epoch: {loop.epoch} stage: [{loop.stage}]'
@@ -81,3 +82,6 @@ class PrintLogger(Callback):
 
     def on_stage_end(self, loop):
         self._end_cursor = None
+
+    def on_event(self, loop, event: Event):
+        print(event.logmsg())
