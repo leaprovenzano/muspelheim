@@ -28,7 +28,7 @@ class ImprovementMonitor(Callback):
             raise ValueError(
                 f'improvement_on must be one of ["ge", "lt"] but got {self.improvement_on}'
             )
-        self._get_value = partial(dotted_attrgetter(self.field))
+        self._get_value = partial(dotted_attrgetter, self.field)
         self._is_improvement = getattr(operator, self.improvement_on)
         self._last_best = float('inf') if self.improvement_on == 'lt' else -float('inf')
         self._best_step = -1
