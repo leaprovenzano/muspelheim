@@ -81,3 +81,13 @@ ModelCheckpoint
     :no-inherited-members:
 
 ----
+
+EarlyStopping
+-------------
+
+.. autoclass:: EarlyStopping
+    :members:
+    :no-undoc-members:
+    :no-inherited-members:
+
+----

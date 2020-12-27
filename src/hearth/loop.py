@@ -35,6 +35,7 @@ class Loop:
         self.epoch = 0
         self.callbacks = CallbackManager(*callbacks)
         self.callbacks.on_registration(self)
+        self.should_stop = False
 
     def grad_context(self):
         if self.stage == 'train':
@@ -120,12 +121,15 @@ class Loop:
         self.callbacks.on_event(self, event)
 
     def __call__(self, train, val, epochs: int = 1):
+        self.should_stop = False
         for _ in range(epochs):
             self.callbacks.on_epoch_start(self)
             for stage, batches in zip(self.stages, (train, val)):
                 self.handle_stage(stage, batches)
             self.callbacks.on_epoch_end(self)
             self.epoch += 1
+            if self.should_stop:
+                break
 
     def __repr__(self) -> str:
         return (
