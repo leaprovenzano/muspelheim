@@ -69,3 +69,18 @@ class Stagnation(MonitoringEvent):
     @property
     def msg(self) -> str:
         return f'stagnant for {self._get_stepmsg()}' f' no improvement from {self.best:0.4f}.'
+
+
+@dataclass
+class ModelSaved(Event):
+    """This event should be emitted when a model is saved as part of checkpointing in a callback.
+
+    Args:
+        model_dir: the directory the model was saved to.
+    """
+
+    model_dir: str
+
+    @property
+    def msg(self):
+        return f' model checkpoint saved to {self.model_dir}.'
