@@ -84,4 +84,4 @@ class PrintLogger(Callback):
         self._end_cursor = None
 
     def on_event(self, loop, event: Event):
-        print(event.logmsg())
+        print(f'EVENT: {event.logmsg()}')
