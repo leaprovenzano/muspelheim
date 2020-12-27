@@ -16,6 +16,7 @@
    transforms
    samplers
    grad
+   events
 
 .. toctree::
 

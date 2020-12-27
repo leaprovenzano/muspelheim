@@ -61,3 +61,13 @@ ClipGradValue
 
 
 ----
+
+ImprovementMonitor
+------------------
+
+.. autoclass:: ImprovementMonitor
+    :members:
+    :no-undoc-members:
+    :no-inherited-members:
+
+----

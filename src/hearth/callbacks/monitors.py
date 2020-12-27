@@ -20,8 +20,9 @@ class ImprovementMonitor(Callback):
     """This callback monitors a metric or loss on the specified stage for improvement and \
     stagnation.
 
-    When improvement or stagnation is detected on the metric it emits :class:`events.Improvement`,
-    or :class:`events.Stagnation` event, which can be used in other callbacks.
+    When improvement or stagnation is detected on the metric it emits \
+     :class:`hearth.events.Improvement` and :class:`hearth.events.Stagnation` events which can be \
+    used in other callbacks.
 
     Args:
         field: the field to monitor on the loop... may be a dotted path string for nested objects.
@@ -37,8 +38,13 @@ class ImprovementMonitor(Callback):
         - stage_end
 
     **Events Emitted:**
-        - :class:`events.Improvement`
-        - :class:`events.Stagnation`
+        - :class:`hearth.events.Improvement`
+        - :class:`hearth.events.Stagnation`
+
+    **Accesses Loop Attributes:**
+        - metric or loss
+        - stage
+        - epoch
     """
 
     field: str = 'loss'
