@@ -84,3 +84,18 @@ class ModelSaved(Event):
     @property
     def msg(self):
         return f' model checkpoint saved to {self.model_dir}.'
+
+
+@dataclass
+class EarlyStop(Event):
+    """this event should be emitted when training is instructed to stop early.
+
+    Args:
+        epoch: the epoch that stopping is triggered.
+    """
+
+    epoch: int
+
+    @property
+    def msg(self):
+        return f' triggered at epoch {self.epoch}.'
