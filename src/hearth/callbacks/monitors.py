@@ -17,6 +17,29 @@ def dotted_attrgetter(path: str, obj):
 
 @dataclass
 class ImprovementMonitor(Callback):
+    """This callback monitors a metric or loss on the specified stage for improvement and \
+    stagnation.
+
+    When improvement or stagnation is detected on the metric it emits :class:`events.Improvement`,
+    or :class:`events.Stagnation` event, which can be used in other callbacks.
+
+    Args:
+        field: the field to monitor on the loop... may be a dotted path string for nested objects.
+            Defaults to 'loss'.
+        improvement_on: string operator specifier ie (lt is less_than and gt is greater than).
+            Defaults to 'lt' (for loss measurement).
+        stage: named stage to measure improvement on. this should correspond to stages on your
+            loop obviously. Defaults to 'val'.
+        stagnant_after: wait this number of steps before you start issuing stagnation events.
+            Defaults to 1.
+
+    **Active On:**
+        - stage_end
+
+    **Events Emitted:**
+        - :class:`events.Improvement`
+        - :class:`events.Stagnation`
+    """
 
     field: str = 'loss'
     improvement_on: Literal['gt', 'lt'] = 'lt'
