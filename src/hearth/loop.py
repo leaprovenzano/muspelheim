@@ -117,7 +117,7 @@ class Loop:
         self.callbacks.on_stage_end(self)
 
     def fire(self, event):
-        self.callbacks.on_event(event, self)
+        self.callbacks.on_event(self, event)
 
     def __call__(self, train, val, epochs: int = 1):
         for _ in range(epochs):
