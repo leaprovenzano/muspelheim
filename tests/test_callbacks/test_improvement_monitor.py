@@ -54,9 +54,9 @@ def test_stagnation():
     loop = FakeLoop(callbacks=[monitor])
 
     expected_log = [
-        Stagnation(field='loss', stage='val', steps=3, best=float('inf'), name='stagnation'),
-        Stagnation(field='loss', stage='val', steps=4, best=float('inf'), name='stagnation'),
-        Stagnation(field='loss', stage='val', steps=5, best=float('inf'), name='stagnation'),
+        Stagnation(field='loss', stage='val', steps=3, best=float('inf')),
+        Stagnation(field='loss', stage='val', steps=4, best=float('inf')),
+        Stagnation(field='loss', stage='val', steps=5, best=float('inf')),
     ]
     loop(5)
     assert loop.event_log == expected_log
@@ -67,15 +67,9 @@ def test_loss_improvement():
     loop = ImprovingLossLoop(callbacks=[monitor])
 
     expected_log = [
-        Improvement(
-            field='loss', stage='val', steps=1, best=2.0, last_best=float('inf'), name='improvement'
-        ),
-        Improvement(
-            field='loss', stage='val', steps=1, best=1.9, last_best=2.0, name='improvement'
-        ),
-        Improvement(
-            field='loss', stage='val', steps=1, best=1.8, last_best=1.9, name='improvement'
-        ),
+        Improvement(field='loss', stage='val', steps=1, best=2.0, last_best=float('inf')),
+        Improvement(field='loss', stage='val', steps=1, best=1.9, last_best=2.0),
+        Improvement(field='loss', stage='val', steps=1, best=1.8, last_best=1.9),
     ]
     loop(3)
     assert loop.event_log == expected_log
@@ -85,20 +79,9 @@ def test_metric_improvement():
     monitor = ImprovementMonitor(field='metric', improvement_on='gt')
     loop = ImprovingMetricLoop(callbacks=[monitor])
     expected_log = [
-        Improvement(
-            field='metric',
-            stage='val',
-            steps=1,
-            best=0.25,
-            last_best=-float('inf'),
-            name='improvement',
-        ),
-        Improvement(
-            field='metric', stage='val', steps=1, best=0.5, last_best=0.25, name='improvement'
-        ),
-        Improvement(
-            field='metric', stage='val', steps=1, best=0.75, last_best=0.5, name='improvement'
-        ),
+        Improvement(field='metric', stage='val', steps=1, best=0.25, last_best=-float('inf')),
+        Improvement(field='metric', stage='val', steps=1, best=0.5, last_best=0.25),
+        Improvement(field='metric', stage='val', steps=1, best=0.75, last_best=0.5),
     ]
 
     loop(3)
