@@ -3,8 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Event:
-    def fire(self, loop):
-        loop.fire(self)
+    """base class for all events."""
 
     @property
     def msg(self) -> str:
@@ -16,6 +15,8 @@ class Event:
 
 @dataclass
 class MonitoringEvent(Event):
+    """base class for monitoring events"""
+
     field: str
     stage: str
     steps: int
@@ -32,10 +33,18 @@ class MonitoringEvent(Event):
 
 @dataclass
 class Improvement(MonitoringEvent):
+    """This event should be emitted on an monitored improvement.
+
+    Args:
+        field: the field being monitored.
+        stage: the stage being monitored.
+        steps: the number of steps (generally epochs) that between this and the last improvement.
+        best: the best value.
+        last_best: the last best value
+    """
 
     best: float
     last_best: float
-    name: str = 'improvement'
 
     @property
     def msg(self) -> str:
@@ -46,9 +55,16 @@ class Improvement(MonitoringEvent):
 
 @dataclass
 class Stagnation(MonitoringEvent):
+    """This event should be emitted when a monitored metric or loss is not improving.
+
+    Args:
+        field: the field being monitored.
+        stage: the stage being monitored.
+        steps: the number of steps (generally epochs) that the measured value has been stagnant.
+        best: the best value seen so far.
+    """
 
     best: float
-    name: str = 'stagnation'
 
     @property
     def msg(self) -> str:
