@@ -39,3 +39,12 @@ ReZero
     :undoc-members:
 
 ----
+
+LayerNormSimple
+---------------
+
+.. autoclass:: LayerNormSimple
+    :members:
+    :undoc-members:
+
+----
