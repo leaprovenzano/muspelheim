@@ -37,14 +37,6 @@ class LayerNormSimple(BaseModule):
                 [ 0.3694, -0.9000,  0.1566, -1.2200,  1.5940],
                 [-0.6139,  1.2486, -0.6323, -1.1554,  1.1530]])
 
-        >>> y.mean(dim=1)
-        tensor([-2.3842e-08,  0.0000e+00, -2.3842e-08])
-
-        >>> y.std(dim=1)
-        tensor([1.1180, 1.1180, 1.1180])
-
-        >>> y.shape
-        torch.Size([3, 5])
     """
 
     def __init__(self, normalized_shape: Union[int, List[int], torch.Size], eps: float = 1e-5):
