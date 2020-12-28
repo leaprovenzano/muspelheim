@@ -47,7 +47,7 @@ class LayerNormSimple(BaseModule):
         torch.Size([3, 5])
     """
 
-    def __init__(self, normalized_shape: Union[int, List[int]], eps: float = 1e-5):
+    def __init__(self, normalized_shape: Union[int, List[int], torch.Size], eps: float = 1e-5):
         super().__init__()
         self.norm = nn.LayerNorm(normalized_shape, eps=eps, elementwise_affine=False)
 
@@ -56,5 +56,6 @@ class LayerNormSimple(BaseModule):
 
     def __repr__(self) -> str:
         shape_or_feats = self.norm.normalized_shape
-        shape_or_feats = shape_or_feats[0] if len(shape_or_feats) == 1 else shape_or_feats
+        if len(shape_or_feats) == 1:  # type: ignore
+            shape_or_feats = shape_or_feats[0]  # type: ignore
         return f'{self.__class__.__name__}({shape_or_feats}, eps={self.norm.eps})'
