@@ -22,8 +22,8 @@ class LayerNormSimple(BaseModule):
 
     Example:
         >>> import torch
-        >>> _ = torch.manual_seed(1)
         >>> from hearth.modules import LayerNormSimple
+        >>> _ = torch.manual_seed(1)
         >>>
         >>> layer = LayerNormSimple(5) # 5 feats
         >>> layer
