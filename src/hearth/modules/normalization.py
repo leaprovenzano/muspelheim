@@ -23,16 +23,17 @@ class LayerNormSimple(BaseModule):
     Example:
         >>> import torch
         >>> from hearth.modules import LayerNormSimple
-        >>> _ = torch.manual_seed(1)
         >>>
         >>> layer = LayerNormSimple(5) # 5 feats
         >>> layer
         LayerNormSimple(5, eps=1e-05)
 
-        >>> x = torch.rand(3, 5) * 10 - 5
+        >>> x = tensor([[-4.2721, -2.8159, -1.2351,  0.2388,  4.5915],
+        ...            [-0.9092, -3.9666, -1.4216, -4.7373,  2.0403],
+        ...            [-1.2210,  4.4796, -1.2772, -2.8781,  4.1868]])
         >>> y = layer(x)
         >>> y.mean(dim=1)
-        tensor([ 0.0000e+00, -1.7881e-08,  0.0000e+00])
+        tensor([-5.3644e-08,  0.0000e+00,  0.0000e+00])
 
         >>> y.std(dim=1)
         tensor([1.1180, 1.1180, 1.1180])
