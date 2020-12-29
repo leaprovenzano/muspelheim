@@ -4,7 +4,7 @@ a collection tools and extensions for working with pytorch
 
 ----
 [![pypi version](https://img.shields.io/pypi/v/hearth.svg)](https://pypi.python.org/pypi/hearth)
-[![travis build](https://img.shields.io/travis/leaprovenzano/hearth.svg)](https://travis-ci.com/leaprovenzano/hearth)
+[![build](https://github.com/leaprovenzano/hearth/workflows/CI/badge.svg)](https://github.com/leaprovenzano/hearth/actions)
 [![documentation status](https://readthedocs.org/projects/hearth/badge/?version=latest)](https://hearth.readthedocs.io/en/latest/?badge=latest)
 [![coverage](https://codecov.io/gh/leaprovenzano/hearth/branch/main/graph/badge.svg)](https://codecov.io/gh/leaprovenzano/hearth/branch/main/graph/badge.svg)
 
