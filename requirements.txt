@@ -1,2 +1,3 @@
 torch
 more_itertools
+collectionish

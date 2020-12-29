@@ -4,6 +4,7 @@ from torch import nn
 from contextlib import nullcontext
 from hearth.callbacks import Callback, CallbackManager
 from hearth.metrics import Running
+from hearth.callbacks import History
 
 
 class Loop:
@@ -24,6 +25,7 @@ class Loop:
         loss_fn: Callable,
         metric_fn: Optional[Callable],
         callbacks: Sequence[Callback] = (),
+        history: Optional[History] = None,
     ):
         self.model = model
         self.optimizer = optimizer
@@ -32,10 +34,11 @@ class Loop:
         self.n_batches = 0
         self.batches_seen = 0
         self.stage = self.stages[0]
-        self.epoch = 0
-        self.callbacks = CallbackManager(*callbacks)
-        self.callbacks.on_registration(self)
         self.should_stop = False
+        self.history = history if history is not None else History()
+        self.callbacks = CallbackManager(self.history, *callbacks)
+        self.callbacks.on_registration(self)
+        self.epoch = self.history.last_epoch + 1 if len(self.history) else 0
 
     def grad_context(self):
         if self.stage == 'train':
@@ -113,7 +116,6 @@ class Loop:
         self.metric_fn.reset()
         self.loss_fn.reset()
         self.callbacks.on_stage_start(self)
-
         self.handle_batches(batches)
         self.callbacks.on_stage_end(self)
 
