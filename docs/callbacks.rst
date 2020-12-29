@@ -101,3 +101,80 @@ History
     :no-inherited-members:
 
 ----
+
+
+LambdaLRCallback
+----------------
+
+.. autoclass:: LambdaLRCallback
+    :members:
+    :no-undoc-members:
+    :no-inherited-members:
+
+----
+
+
+MultiplicativeLRCallback
+------------------------
+
+.. autoclass:: MultiplicativeLRCallback
+    :members:
+    :no-undoc-members:
+    :no-inherited-members:
+
+----
+
+
+StepLRCallback
+--------------
+
+.. autoclass:: StepLRCallback
+    :members:
+    :no-undoc-members:
+    :no-inherited-members:
+
+----
+
+
+MultiStepLRCallback
+-------------------
+
+.. autoclass:: MultiStepLRCallback
+    :members:
+    :no-undoc-members:
+    :no-inherited-members:
+
+----
+
+
+ExponentialLRCallback
+---------------------
+
+.. autoclass:: ExponentialLRCallback
+    :members:
+    :no-undoc-members:
+    :no-inherited-members:
+
+----
+
+
+CosineAnnealingLRCallback
+-------------------------
+
+.. autoclass:: CosineAnnealingLRCallback
+    :members:
+    :no-undoc-members:
+    :no-inherited-members:
+
+----
+
+
+ReduceLROnPlateauCallback
+-------------------------
+
+.. autoclass:: ReduceLROnPlateauCallback
+    :members:
+    :no-undoc-members:
+    :no-inherited-members:
+
+----
