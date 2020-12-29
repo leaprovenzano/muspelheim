@@ -72,10 +72,10 @@ ImprovementMonitor
 
 ----
 
-ModelCheckpoint
----------------
+Checkpoint
+----------
 
-.. autoclass:: ModelCheckpoint
+.. autoclass:: Checkpoint
     :members:
     :no-undoc-members:
     :no-inherited-members:
@@ -86,6 +86,16 @@ EarlyStopping
 -------------
 
 .. autoclass:: EarlyStopping
+    :members:
+    :no-undoc-members:
+    :no-inherited-members:
+
+----
+
+History
+-------
+
+.. autoclass:: History
     :members:
     :no-undoc-members:
     :no-inherited-members:

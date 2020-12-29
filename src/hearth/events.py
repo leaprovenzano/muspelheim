@@ -72,7 +72,7 @@ class Stagnation(MonitoringEvent):
 
 
 @dataclass
-class ModelSaved(Event):
+class CheckpointSaved(Event):
     """This event should be emitted when a model is saved as part of checkpointing in a callback.
 
     Args:
@@ -83,7 +83,7 @@ class ModelSaved(Event):
 
     @property
     def msg(self):
-        return f' model checkpoint saved to {self.model_dir}.'
+        return f' checkpoint saved to {self.model_dir}.'
 
 
 @dataclass

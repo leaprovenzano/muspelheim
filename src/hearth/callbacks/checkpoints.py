@@ -2,16 +2,17 @@ from typing import Sequence, Type, Optional, Callable
 import os
 from dataclasses import dataclass
 from copy import deepcopy
+import torch
 from hearth.events import MonitoringEvent
 from hearth.callbacks import Callback
-from hearth.events import Improvement, ModelSaved
+from hearth.events import Improvement, CheckpointSaved
 from hearth.modules import BaseModule
 from hearth._file_utils import mkdirs_if_not_exist
 
 
 @dataclass
-class ModelCheckpoint(Callback):
-    """This callback saves model checkpoints on certain events.
+class Checkpoint(Callback):
+    """This callback saves checkpoints on certain events.
 
     Note:
         only models derived from :class:`hearth.modules.BaseModule` are currently supported.
@@ -27,7 +28,8 @@ class ModelCheckpoint(Callback):
              safety. Defaults to None.
         field: If provided only save on events where field matches this field.
         stage: If provided only save on events where stage matches this stage.
-
+        save_history: if True save the loop history at this step to the model dir. Defaults to True
+        save_optimizer: if True save the optimizer state dict to the model dir. Defaults to True.
 
     **Active On:**
         - registration
@@ -42,6 +44,8 @@ class ModelCheckpoint(Callback):
 
     **Accesses Loop Attributes:**
         - model
+        - history (if save_history is True)
+        - optimizer (if save_optimizer is True)
 
     **Accesses Event Attributes:**
         - field
@@ -53,6 +57,8 @@ class ModelCheckpoint(Callback):
     prepare_model: Optional[Callable[[BaseModule], BaseModule]] = None
     field: Optional[str] = None
     stage: Optional[str] = None
+    save_history: bool = True
+    save_optimizer: bool = True
 
     def __post_init__(self):
         self._should_save = False
@@ -86,10 +92,24 @@ class ModelCheckpoint(Callback):
             save_model = self.prepare_model(save_model)
         save_model.save(self.model_dir)
 
+    def _save_history(self, history):
+        history.save(self.model_dir)
+
+    def _save_optimizer(self, optimizer):
+        path = os.path.join(self.model_dir, 'optimizer_state.pt')
+        torch.save(optimizer.state_dict(), path)
+
+    def save_checkpoint(self, loop):
+        self._save_model(loop.model)
+        if self.save_history:
+            self._save_history(loop.history)
+        if self.save_optimizer:
+            self._save_optimizer(loop.optimizer)
+
     def on_epoch_end(self, loop):
         if self._should_save:
-            self._save_model(loop.model)
-            event = ModelSaved(self.model_dir)
+            self.save_checkpoint(loop)
+            event = CheckpointSaved(self.model_dir)
             loop.fire(event)
             self._should_save = False
 
