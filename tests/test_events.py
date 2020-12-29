@@ -1,5 +1,5 @@
 import pytest
-from hearth.events import Improvement, Stagnation, ModelSaved, EarlyStop
+from hearth.events import Improvement, Stagnation, CheckpointSaved, EarlyStop
 
 
 @pytest.mark.parametrize(
@@ -13,7 +13,7 @@ from hearth.events import Improvement, Stagnation, ModelSaved, EarlyStop
             Improvement(field='metric', stage='val', steps=2, best=0.9, last_best=0.8),
             'Improvement[val.metric] improved from : 0.8000 to 0.9000 in 2 steps.',
         ),
-        (ModelSaved('some/dir'), 'ModelSaved model checkpoint saved to some/dir.'),
+        (CheckpointSaved('some/dir'), 'CheckpointSaved checkpoint saved to some/dir.'),
         (EarlyStop(1), 'EarlyStop triggered at epoch 1.'),
     ],
 )
