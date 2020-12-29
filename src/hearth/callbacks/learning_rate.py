@@ -13,14 +13,13 @@ import operator
 from torch.optim.lr_scheduler import (
     _LRScheduler,
     LambdaLR,
-    MultiplicativeLR,
     StepLR,
     MultiStepLR,
     ExponentialLR,
     CosineAnnealingLR,
     ReduceLROnPlateau,
 )
-
+from torch.optim.lr_scheduler import MultiplicativeLR  # type: ignore
 
 from hearth.callbacks import Callback
 from hearth.callbacks.utils import if_active
