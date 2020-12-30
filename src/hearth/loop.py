@@ -57,31 +57,46 @@ class Loop:
         return self.metric_fn.average
 
     def optimizer_step(self):
-        self.callbacks.on_step_start(self)
         self.optimizer.step()
+
+    def _optimizer_step(self):
+        self.callbacks.on_step_start(self)
+        self.optimizer_step()
         self.callbacks.on_step_end(self)
 
-    def compute_loss(self, *args, **kwargs):
+    def compute_loss(self, yhat, ytru, **kwargs):
+        return self.loss_fn(yhat, ytru, **kwargs)
+
+    def _compute_loss(self, yhat, ytru, **kwargs):
         self.callbacks.on_loss_start(self)
-        loss = self.loss_fn(*args, **kwargs)
+        loss = self.compute_loss(yhat, ytru, **kwargs)
         self.callbacks.on_loss_end(self)
         return loss
 
-    def compute_metric(self, *args, **kwargs):
+    def compute_metric(self, yhat, ytru, **kwargs):
+        return self.metric_fn(yhat, ytru, **kwargs)
+
+    def _compute_metric(self, yhat, ytru, **kwargs):
         with torch.no_grad():
             self.callbacks.on_metric_start(self)
-            metric = self.metric_fn(*args, **kwargs)
+            metric = self.compute_metric(yhat, ytru, **kwargs)
             self.callbacks.on_metric_end(self)
         return metric
 
-    def backward(self, loss, **kwargs):
+    def _backward(self, loss, **kwargs):
         self.callbacks.on_backward_start(self)
-        loss.backward()
+        self.backward(loss)
         self.callbacks.on_backward_end(self)
 
-    def forward(self, *args, **kwargs):
+    def backward(self, loss, **kwargs):
+        loss.backward()
+
+    def _forward(self, x, **kwargs):
         with self.grad_context():
-            return self.model(*args, **kwargs)
+            return self.forward(x, **kwargs)
+
+    def forward(self, x, **kwargs):
+        return self.model(x, **kwargs)
 
     def handle_batch(self, batch):
         # do forward pass and get loss
@@ -89,14 +104,12 @@ class Loop:
         # unpack the batch... you can override this if your batch differs...
         x, y = batch
 
-        y_hat = self.forward(x)
-        loss = self.compute_loss(y_hat, y)
+        y_hat = self._forward(x)
+        loss = self._compute_loss(y_hat, y)
         if self._requires_backward():
-            self.backward(loss)
-            self.optimizer_step()
-
-        # compute metrics (grad management is already handled in compute metrics fn)
-        self.compute_metric(y_hat, y)
+            self._backward(loss)
+            self._optimizer_step()
+        self._compute_metric(y_hat, y)
 
     def handle_batches(self, batches):
         self.n_batches = len(batches)
