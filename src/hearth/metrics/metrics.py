@@ -1,5 +1,15 @@
 from dataclasses import dataclass
-from hearth.metrics.mixins import HardBinaryMixin, MaskingMixin, AccuracyMixin, ArgmaxMixin
+from hearth.metrics.mixins import (
+    HardBinaryMixin,
+    MaskingMixin,
+    AccuracyMixin,
+    ArgmaxMixin,
+    RecallMixin,
+    PrecisionMixin,
+    F1Mixin,
+    FBetaMixin,
+    BinaryMixin,
+)
 
 
 @dataclass
@@ -85,4 +95,34 @@ class CategoricalAccuracy(MaskingMixin, ArgmaxMixin, AccuracyMixin):
         tensor(0.1111)
     """
 
+    pass
+
+
+@dataclass
+class BinaryRecall(HardBinaryMixin, MaskingMixin, RecallMixin):
+    pass
+
+
+@dataclass
+class BinaryPrecision(HardBinaryMixin, MaskingMixin, PrecisionMixin):
+    pass
+
+
+@dataclass
+class SoftBinaryRecall(BinaryMixin, MaskingMixin, RecallMixin):
+    pass
+
+
+@dataclass
+class SoftBinaryPrecision(BinaryMixin, MaskingMixin, PrecisionMixin):
+    pass
+
+
+@dataclass
+class BinaryF1(HardBinaryMixin, MaskingMixin, F1Mixin):
+    pass
+
+
+@dataclass
+class BinaryFBeta(HardBinaryMixin, MaskingMixin, FBetaMixin):
     pass
