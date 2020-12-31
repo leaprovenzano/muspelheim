@@ -3,19 +3,19 @@
 
 .. currentmodule:: {{ fullname }}
 
-.. automodule:: {{ fullname }}
-
 
 {% if classes %}
 
 
 {% for class in classes %}
 
+
 {{ class | underline('-') }}
 
 .. autoclass:: {{ class }}
     :members:
     :undoc-members:
+    :no-inherited-members:
 
 ----
 
