@@ -1,18 +1,26 @@
 __all__ = [
     'BinaryAccuracy',
-    'CategoricalAccuracy',
     'BinaryF1',
     'BinaryFBeta',
     'BinaryPrecision',
     'BinaryRecall',
+    'CategoricalRecall',
+    'CategoricalPrecision',
+    'CategoricalFBeta',
+    'CategoricalF1',
+    'CategoricalAccuracy',
     'Running',
 ]
 from .metrics import (
     BinaryAccuracy,
-    CategoricalAccuracy,
     BinaryF1,
     BinaryFBeta,
     BinaryPrecision,
     BinaryRecall,
+    CategoricalRecall,
+    CategoricalPrecision,
+    CategoricalFBeta,
+    CategoricalF1,
+    CategoricalAccuracy,
 )
 from .wrappers import Running
