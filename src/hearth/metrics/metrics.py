@@ -340,6 +340,9 @@ class BinaryFBeta(HardBinaryMixin, MaskingMixin, FBetaMixin):
     masking support.
 
     Args:
+        beta: beta value for weighting precision and recall. ``beta < 1`` weights precision higher,
+            while ``beta > 1`` gives more weight to recall. Defaults to 1 (making the default the
+             same as f1 score).
         mask_target: mask targets equal to this value. defaults to ``-1``.
         from_logits: if ``True`` inputs are expected to be unnormalized and a sigmoid
             function will be applied before comparison to targets. defaults to ``False``.
@@ -383,19 +386,179 @@ class BinaryFBeta(HardBinaryMixin, MaskingMixin, FBetaMixin):
 
 @dataclass
 class CategoricalRecall(MaskingMixin, OneHotMixin, RecallMixin, AverageMixin):
+    """categorical recall over possibly unnormalized scores given target indices.
+
+    Built to have a somewhat similar interface to\
+     `nn.CrossEntropyLoss <https://pytorch.org/docs/stable/data.html#torch.nn.CrossEntropyLoss>`_.
+
+    Args:
+        mask_target: mask targets equal to this value. defaults to ``-1``.
+
+    Example:
+        >>> import torch
+        >>> from hearth.metrics import CategoricalRecall
+        >>>
+        >>> # here inputs is batch, feats and is not nessisarily normalized
+        >>> inputs = torch.tensor([[-0.2956,  1.6050,  0.4113, -1.9041],
+        ...                        [ 0.2095,  1.2959, -1.2466,  2.2302],
+        ...                        [ 0.4702, -0.7506,  1.6751,  0.3370],
+        ...                        [-0.4504,  0.5301, -1.1206, -0.5896],
+        ...                        [ 0.7439,  0.4022,  0.5913,  0.1511],
+        ...                        [-0.0523, -1.0082,  0.5536, -1.2748],
+        ...                        [ 0.5151, -0.9396,  0.7223, -0.5500],
+        ...                        [ 0.1083,  2.7311,  1.4429,  1.0640]])
+        >>> targets = torch.tensor([3, 1, 1, 2, 0, 3, 0, 2]) # true class indices
+        >>>
+        >>> recall = CategoricalRecall()
+        >>> recall(inputs, targets)
+        tensor(0.1250)
+
+        if you're predicting categories for variable length sequences
+        you can mask your targets with ``mask_target`` (-1 by default)
+        predictions at those timesteps will then be excluded from the metric.
+
+        >>> sequence_inputs = inputs.reshape(2, 4, 4) # (batch, timesteps, classes)
+        >>> # note the last two timesteps in targets are masked with -1
+        >>> masked_targets = torch.tensor([[ 3,  1,  1, 2],
+        ...                                [ 0, 3, -1, -1]]) # (batch, timesteps)
+        >>> recall(sequence_inputs, masked_targets)
+        tensor(0.2500)
+    """
+
     pass
 
 
 @dataclass
 class CategoricalPrecision(MaskingMixin, OneHotMixin, PrecisionMixin, AverageMixin):
+    """categorical precision over possibly unnormalized scores given target indices.
+
+    Built to have a somewhat similar interface to\
+     `nn.CrossEntropyLoss <https://pytorch.org/docs/stable/data.html#torch.nn.CrossEntropyLoss>`_.
+
+
+    Args:
+        mask_target: mask targets equal to this value. defaults to ``-1``.
+
+    Example:
+        >>> import torch
+        >>> from hearth.metrics import CategoricalPrecision
+        >>>
+        >>> # here inputs is batch, feats and is not nessisarily normalized
+        >>> inputs = torch.tensor([[-0.2956,  1.6050,  0.4113, -1.9041],
+        ...                        [ 0.2095,  1.2959, -1.2466,  2.2302],
+        ...                        [ 0.4702, -0.7506,  1.6751,  0.3370],
+        ...                        [-0.4504,  0.5301, -1.1206, -0.5896],
+        ...                        [ 0.7439,  0.4022,  0.5913,  0.1511],
+        ...                        [-0.0523, -1.0082,  0.5536, -1.2748],
+        ...                        [ 0.5151, -0.9396,  0.7223, -0.5500],
+        ...                        [ 0.1083,  2.7311,  1.4429,  1.0640]])
+        >>> targets = torch.tensor([3, 1, 1, 2, 0, 3, 0, 2]) # true class indices
+        >>>
+        >>> precision = CategoricalPrecision()
+        >>> precision(inputs, targets)
+        tensor(0.2500)
+
+        if you're predicting categories for variable length sequences
+        you can mask your targets with ``mask_target`` (-1 by default)
+        predictions at those timesteps will then be excluded from the metric.
+
+        >>> sequence_inputs = inputs.reshape(2, 4, 4) # (batch, timesteps, classes)
+        >>> # note the last two timesteps in targets are masked with -1
+        >>> masked_targets = torch.tensor([[ 3,  1,  1, 2],
+        ...                                [ 0,  3, -1, -1]]) # (batch, timesteps)
+        >>> precision(sequence_inputs, masked_targets)
+        tensor(0.2500)
+    """
+
     pass
 
 
 @dataclass
 class CategoricalFBeta(MaskingMixin, OneHotMixin, FBetaMixin, AverageMixin):
+    """categorical fbeta score over possibly unnormalized scores given target indices.
+
+    Built to have a somewhat similar interface to\
+     `nn.CrossEntropyLoss <https://pytorch.org/docs/stable/data.html#torch.nn.CrossEntropyLoss>`_.
+
+    Args:
+        beta: beta value for weighting precision and recall.
+            ``beta < 1`` weights precision higher, while ``beta > 1`` gives
+            more weight to recall. Defaults to 1 (making the default the same as f1 score).
+        mask_target: mask targets equal to this value. defaults to ``-1``.
+
+    Example:
+        >>> import torch
+        >>> from hearth.metrics import CategoricalFBeta
+        >>>
+        >>> # here inputs is batch, feats and is not nessisarily normalized
+        >>> inputs = torch.tensor([[-0.2956,  1.6050,  0.4113, -1.9041],
+        ...                        [ 0.2095,  1.2959, -1.2466,  2.2302],
+        ...                        [ 0.4702, -0.7506,  1.6751,  0.3370],
+        ...                        [-0.4504,  0.5301, -1.1206, -0.5896],
+        ...                        [ 0.7439,  0.4022,  0.5913,  0.1511],
+        ...                        [-0.0523, -1.0082,  0.5536, -1.2748],
+        ...                        [ 0.5151, -0.9396,  0.7223, -0.5500],
+        ...                        [ 0.1083,  2.7311,  1.4429,  1.0640]])
+        >>> targets = torch.tensor([3, 1, 1, 2, 0, 3, 0, 2]) # true class indices
+        >>>
+        >>> fbeta = CategoricalFBeta(beta=.5)
+        >>> fbeta(inputs, targets)
+        tensor(0.2083)
+
+        if you're predicting categories for variable length sequences
+        you can mask your targets with ``mask_target`` (-1 by default)
+        predictions at those timesteps will then be excluded from the metric.
+
+        >>> sequence_inputs = inputs.reshape(2, 4, 4) # (batch, timesteps, classes)
+        >>> # note the last two timesteps in targets are masked with -1
+        >>> masked_targets = torch.tensor([[ 3,  1,  1, 2],
+        ...                                [ 0,  3, -1, -1]]) # (batch, timesteps)
+        >>> fbeta(sequence_inputs, masked_targets)
+        tensor(0.2500)
+    """
+
     pass
 
 
 @dataclass
 class CategoricalF1(MaskingMixin, OneHotMixin, F1Mixin, AverageMixin):
+    """categorical f1 score over possibly unnormalized scores given target indices.
+
+    Built to have a somewhat similar interface to\
+     `nn.CrossEntropyLoss <https://pytorch.org/docs/stable/data.html#torch.nn.CrossEntropyLoss>`_.
+
+    Args:
+        mask_target: mask targets equal to this value. defaults to ``-1``.
+
+    Example:
+        >>> import torch
+        >>> from hearth.metrics import CategoricalF1
+        >>>
+        >>> # here inputs is batch, feats and is not nessisarily normalized
+        >>> inputs = torch.tensor([[-0.2956,  1.6050,  0.4113, -1.9041],
+        ...                        [ 0.2095,  1.2959, -1.2466,  2.2302],
+        ...                        [ 0.4702, -0.7506,  1.6751,  0.3370],
+        ...                        [-0.4504,  0.5301, -1.1206, -0.5896],
+        ...                        [ 0.7439,  0.4022,  0.5913,  0.1511],
+        ...                        [-0.0523, -1.0082,  0.5536, -1.2748],
+        ...                        [ 0.5151, -0.9396,  0.7223, -0.5500],
+        ...                        [ 0.1083,  2.7311,  1.4429,  1.0640]])
+        >>> targets = torch.tensor([3, 1, 1, 2, 0, 3, 0, 2]) # true class indices
+        >>>
+        >>> f1 = CategoricalF1()
+        >>> f1(inputs, targets)
+        tensor(0.1667)
+
+        if you're predicting categories for variable length sequences
+        you can mask your targets with ``mask_target`` (-1 by default)
+        predictions at those timesteps will then be excluded from the metric.
+
+        >>> sequence_inputs = inputs.reshape(2, 4, 4) # (batch, timesteps, classes)
+        >>> # note the last two timesteps in targets are masked with -1
+        >>> masked_targets = torch.tensor([[ 3,  1,  1, 2],
+        ...                                [ 0, 3, -1, -1]]) # (batch, timesteps)
+        >>> f1(sequence_inputs, masked_targets)
+        tensor(0.2500)
+    """
+
     pass
