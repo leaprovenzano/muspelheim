@@ -2,26 +2,20 @@
 
 .. currentmodule:: hearth
 
-.. toctree::
-   :caption: API:
-
-   modules
 
 .. autosummary::
+   :caption: API:
    :toctree: _autosummary
 
+   modules
    activations
    metrics
    loop
    transforms
    samplers
    grad
-   events
-
-.. toctree::
-
    callbacks
-
+   events
 
 
 .. toctree::
