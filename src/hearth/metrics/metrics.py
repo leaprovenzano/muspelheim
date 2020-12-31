@@ -195,11 +195,95 @@ class BinaryPrecision(HardBinaryMixin, MaskingMixin, PrecisionMixin):
 
 @dataclass
 class SoftBinaryRecall(BinaryMixin, MaskingMixin, RecallMixin):
+    """a soft version of binary recall over possibly un-normalized values (see ``from_logits``)\
+     with target masking support.
+
+    Args:
+        mask_target: mask targets equal to this value. defaults to ``-1``.
+        from_logits: if ``True`` inputs are expected to be unnormalized and a sigmoid
+            function will be applied before comparison to targets. defaults to ``False``.
+
+    Example:
+        >>> import torch
+        >>> from hearth.metrics import SoftBinaryRecall
+        >>>
+        >>> inputs = torch.tensor([0.7116, 0.6470, 0.5039, 0.9953, 0.8948, 0.4229, 0.8654, 0.8108])
+        >>> targets = torch.tensor([0., 1., 1., 1., 0., 1., 0., 0.])
+        >>>
+        >>> softrecall = SoftBinaryRecall()
+        >>> softrecall(inputs, targets)
+        tensor(0.6423)
+
+        works fine with an extra dim:
+
+        >>> softrecall(inputs.unsqueeze(-1), targets.unsqueeze(-1))
+        tensor(0.6423)
+
+        use the ``from_logits`` option if your inputs will not be sigmoid squashed:
+
+        >>> softrecall = SoftBinaryRecall(from_logits=True)
+        >>> unsigmoided = torch.log(inputs/(1-inputs))
+        >>> softrecall(unsigmoided, targets)
+        tensor(0.6423)
+
+        for cases like variable lenght time sequences use the mask target option:
+
+        >>> softrecall = SoftBinaryRecall(mask_target=-1)
+        >>> inputs = inputs.reshape(2, 4) # (batch, sequence length)
+        >>> # note we mask some timesteps with -1
+        >>> targets = torch.tensor([[0., 1., 1., -1],
+        ...                         [0., 1, -1, -1]])
+        >>> softrecall(inputs, targets)
+        tensor(0.5246)
+    """
+
     pass
 
 
 @dataclass
 class SoftBinaryPrecision(BinaryMixin, MaskingMixin, PrecisionMixin):
+    """a soft version of binary precision over possibly un-normalized values (see ``from_logits``)\
+     with target masking support.
+
+    Args:
+        mask_target: mask targets equal to this value. defaults to ``-1``.
+        from_logits: if ``True`` inputs are expected to be unnormalized and a sigmoid
+            function will be applied before comparison to targets. defaults to ``False``.
+
+    Example:
+        >>> import torch
+        >>> from hearth.metrics import SoftBinaryPrecision
+        >>>
+        >>> inputs = torch.tensor([0.7116, 0.6470, 0.5039, 0.9953, 0.8948, 0.4229, 0.8654, 0.8108])
+        >>> targets = torch.tensor([0., 1., 1., 1., 0., 1., 0., 0.])
+        >>>
+        >>> softprecision = SoftBinaryPrecision()
+        >>> softprecision(inputs, targets)
+        tensor(0.4390)
+
+        works fine with an extra dim:
+
+        >>> softprecision(inputs.unsqueeze(-1), targets.unsqueeze(-1))
+        tensor(0.4390)
+
+        use the ``from_logits`` option if your inputs will not be sigmoid squashed:
+
+        >>> softprecision = SoftBinaryPrecision(from_logits=True)
+        >>> unsigmoided = torch.log(inputs/(1-inputs))
+        >>> softprecision(unsigmoided, targets)
+        tensor(0.4390)
+
+        for cases like variable lenght time sequences use the mask target option:
+
+        >>> softprecision = SoftBinaryPrecision(mask_target=-1)
+        >>> inputs = inputs.reshape(2, 4) # (batch, sequence length)
+        >>> # note we mask some timesteps with -1
+        >>> targets = torch.tensor([[0., 1., 1., -1],
+        ...                         [0., 1, -1, -1]])
+        >>> softprecision(inputs, targets)
+        tensor(0.4949)
+    """
+
     pass
 
 
