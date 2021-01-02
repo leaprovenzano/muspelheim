@@ -39,4 +39,4 @@ class TensorDict(NumAttyDict):
         Returns:
             :class:`NumberDict`
         """
-        return NumberDict({k: v.item() for k, v in self.items()})
+        return NumberDict({k: v.item() for k, v in self.items()})  # type: ignore
