@@ -26,9 +26,9 @@ class TensorDict(NumAttyDict):
         return self
 
     def __setitem__(self, k, v):
-        if isinstance(v, (TensorDict, torch.Tensor)):
-            self[k] = v
-        raise TypeError('values must be either tensors or TensorDicts')
+        if not isinstance(v, (TensorDict, torch.Tensor)):
+            raise TypeError('values must be either tensors or TensorDicts')
+        self[k] = v
 
     def item(self) -> 'NumAttyDict':
         """get python numbers out of this Tensordict by calling item on all tensors in it.
