@@ -2,12 +2,14 @@ from dataclasses import dataclass
 from hearth.callbacks import Callback
 from hearth.events import Event
 
+
 DEFAULT_BATCH_FMT = (
     'epoch: {loop.epoch} stage: [{loop.stage}]'
     ' batch: {loop.batches_seen}/{loop.n_batches}'
     ' loss: {loop.loss:0.4f}'
-    ' metric: {loop.metric:0.4f}'
 )
+
+DEFAULT_METRIC_FMT = " {loop.metric:0.4f}"
 
 
 @dataclass
@@ -43,7 +45,7 @@ class PrintLogger(Callback):
         >>> loop = Loop(model=model,
         ...         optimizer=torch.optim.AdamW(model.parameters(), lr=0.001),
         ...        loss_fn = nn.BCELoss(),
-        ...        metric_fn = BinaryAccuracy(),
+        ...        metrics = BinaryAccuracy(),
         ...        callbacks= [PrintLogger()]
         ...       )
         >>> loop(train_batches, val_batches, 2) # doctest: +SKIP
@@ -56,6 +58,7 @@ class PrintLogger(Callback):
     """
 
     batch_format: str = DEFAULT_BATCH_FMT
+    metric_format: str = DEFAULT_METRIC_FMT
     epoch_delim: str = '-'
     epoch_delim_width: int = 80
 
@@ -64,6 +67,10 @@ class PrintLogger(Callback):
 
     def print_msg(self, msg: str):
         print(msg, end=self._end_cursor, flush=True, sep='')
+
+    def on_registration(self, loop):
+        if loop._has_metrics:
+            self.batch_format = self.batch_format + self.metric_format
 
     def get_batch_msg(self, loop) -> str:
         return self.batch_format.format(loop=loop)

@@ -1,7 +1,15 @@
 from typing import Mapping, TypeVar, Union, Dict
-
+import re
 
 T = TypeVar('T')
+
+_TITLE_BOUNDRY = re.compile(r'(?=[A-Z])')
+
+
+def to_snakecase(s: str):
+    if len(s) > 1 and not s.islower():
+        return f'{s[0]}{re.sub(_TITLE_BOUNDRY, "_", s[1:])}'.lower()
+    return s
 
 
 class MissingFromRegistryError(KeyError):

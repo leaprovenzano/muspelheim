@@ -16,6 +16,7 @@
    grad
    callbacks
    events
+   containers
 
 
 .. toctree::
