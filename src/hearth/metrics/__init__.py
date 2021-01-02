@@ -1,5 +1,5 @@
 __all__ = [
-    'BinaryAccuracy',
+    'Metric' 'BinaryAccuracy',
     'BinaryF1',
     'BinaryFBeta',
     'BinaryPrecision',
@@ -10,6 +10,7 @@ __all__ = [
     'CategoricalFBeta',
     'CategoricalF1',
     'CategoricalAccuracy',
+    'MetricStack',
     'Running',
 ]
 from .metrics import (
@@ -27,3 +28,4 @@ from .metrics import (
     CategoricalAccuracy,
 )
 from .wrappers import Running
+from .base import Metric, MetricStack

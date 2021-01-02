@@ -33,7 +33,7 @@ def test_full_loop_on_simple_xor():
         model=model,
         optimizer=torch.optim.AdamW(model.parameters(), lr=0.001),
         loss_fn=nn.BCELoss(),
-        metric_fn=BinaryAccuracy(),
+        metrics=BinaryAccuracy(),
     )
 
     loop(train_batches, val_batches, 4)

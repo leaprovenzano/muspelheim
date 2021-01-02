@@ -106,7 +106,6 @@ class LambdaLRCallback(EpochLRSchedulerCallback, scheduler_cls=LambdaLR):
         >>> from torch.utils.data import TensorDataset, DataLoader
         >>>
         >>> from hearth.loop import Loop
-        >>> from hearth.metrics import BinaryAccuracy
         >>> from hearth.callbacks import LambdaLRCallback
         >>>
         >>> # make fakey train data and model
@@ -122,7 +121,6 @@ class LambdaLRCallback(EpochLRSchedulerCallback, scheduler_cls=LambdaLR):
         >>> loop = Loop(model,
         ...             optimizer=torch.optim.AdamW(model.parameters(), lr=0.1),
         ...             loss_fn = nn.BCELoss(),
-        ...             metric_fn=BinaryAccuracy(),
         ...             callbacks = [callback]
         ...            )
         >>>
@@ -157,7 +155,6 @@ class MultiplicativeLRCallback(EpochLRSchedulerCallback, scheduler_cls=Multiplic
         >>> from torch.utils.data import TensorDataset, DataLoader
         >>>
         >>> from hearth.loop import Loop
-        >>> from hearth.metrics import BinaryAccuracy
         >>> from hearth.callbacks import MultiplicativeLRCallback
         >>>
         >>> # make fakey train data and model
@@ -173,7 +170,6 @@ class MultiplicativeLRCallback(EpochLRSchedulerCallback, scheduler_cls=Multiplic
         >>> loop = Loop(model,
         ...             optimizer=torch.optim.AdamW(model.parameters(), lr=0.1),
         ...             loss_fn = nn.BCELoss(),
-        ...             metric_fn=BinaryAccuracy(),
         ...             callbacks = [callback]
         ...            )
         >>>
@@ -209,7 +205,6 @@ class StepLRCallback(EpochLRSchedulerCallback, scheduler_cls=StepLR):
         >>> from torch.utils.data import TensorDataset, DataLoader
         >>>
         >>> from hearth.loop import Loop
-        >>> from hearth.metrics import BinaryAccuracy
         >>> from hearth.callbacks import StepLRCallback
         >>>
         >>> # make fakey train data and model
@@ -225,7 +220,6 @@ class StepLRCallback(EpochLRSchedulerCallback, scheduler_cls=StepLR):
         >>> loop = Loop(model,
         ...             optimizer=torch.optim.AdamW(model.parameters(), lr=0.1),
         ...             loss_fn = nn.BCELoss(),
-        ...             metric_fn=BinaryAccuracy(),
         ...             callbacks = [callback]
         ...            )
         >>>
@@ -264,7 +258,6 @@ class MultiStepLRCallback(EpochLRSchedulerCallback, scheduler_cls=MultiStepLR):
         >>> from torch.utils.data import TensorDataset, DataLoader
         >>>
         >>> from hearth.loop import Loop
-        >>> from hearth.metrics import BinaryAccuracy
         >>> from hearth.callbacks import MultiStepLRCallback
         >>>
         >>> # make fakey train data and model
@@ -280,7 +273,6 @@ class MultiStepLRCallback(EpochLRSchedulerCallback, scheduler_cls=MultiStepLR):
         >>> loop = Loop(model,
         ...             optimizer=torch.optim.AdamW(model.parameters(), lr=0.1),
         ...             loss_fn = nn.BCELoss(),
-        ...             metric_fn=BinaryAccuracy(),
         ...             callbacks = [callback]
         ...            )
         >>>
@@ -320,7 +312,6 @@ class ExponentialLRCallback(EpochLRSchedulerCallback, scheduler_cls=ExponentialL
         >>> from torch.utils.data import TensorDataset, DataLoader
         >>>
         >>> from hearth.loop import Loop
-        >>> from hearth.metrics import BinaryAccuracy
         >>> from hearth.callbacks import ExponentialLRCallback
         >>>
         >>> # make fakey train data and model
@@ -336,7 +327,6 @@ class ExponentialLRCallback(EpochLRSchedulerCallback, scheduler_cls=ExponentialL
         >>> loop = Loop(model,
         ...             optimizer=torch.optim.AdamW(model.parameters(), lr=0.1),
         ...             loss_fn = nn.BCELoss(),
-        ...             metric_fn=BinaryAccuracy(),
         ...             callbacks = [callback]
         ...            )
         >>>
@@ -368,7 +358,6 @@ class CosineAnnealingLRCallback(EpochLRSchedulerCallback, scheduler_cls=CosineAn
         >>> from torch.utils.data import TensorDataset, DataLoader
         >>>
         >>> from hearth.loop import Loop
-        >>> from hearth.metrics import BinaryAccuracy
         >>> from hearth.callbacks import CosineAnnealingLRCallback
         >>>
         >>> # make fakey train data and model
@@ -384,7 +373,6 @@ class CosineAnnealingLRCallback(EpochLRSchedulerCallback, scheduler_cls=CosineAn
         >>> loop = Loop(model,
         ...             optimizer=torch.optim.AdamW(model.parameters(), lr=0.1),
         ...             loss_fn = nn.BCELoss(),
-        ...             metric_fn=BinaryAccuracy(),
         ...             callbacks = [callback]
         ...            )
         >>>
@@ -441,7 +429,6 @@ class ReduceLROnPlateauCallback(EpochLRSchedulerCallback, scheduler_cls=ReduceLR
         >>> from torch.utils.data import TensorDataset, DataLoader
         >>>
         >>> from hearth.loop import Loop
-        >>> from hearth.metrics import BinaryAccuracy
         >>> from hearth.callbacks import ReduceLROnPlateauCallback
         >>> _ = torch.manual_seed(0)
         >>>
@@ -458,7 +445,6 @@ class ReduceLROnPlateauCallback(EpochLRSchedulerCallback, scheduler_cls=ReduceLR
         >>> loop = Loop(model,
         ...             optimizer=torch.optim.AdamW(model.parameters(), lr=0.1),
         ...             loss_fn = nn.BCELoss(),
-        ...             metric_fn=BinaryAccuracy(),
         ...             callbacks = [callback]
         ...            )
         >>>
