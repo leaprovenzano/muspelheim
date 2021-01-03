@@ -1,5 +1,4 @@
 from collectionish import NumAttyDict
-import torch
 
 
 class NumberDict(NumAttyDict):
@@ -24,11 +23,6 @@ class TensorDict(NumAttyDict):
         for v in self.values():
             v.to(device)
         return self
-
-    def __setitem__(self, k, v):
-        if not isinstance(v, (TensorDict, torch.Tensor)):
-            raise TypeError('values must be either tensors or TensorDicts')
-        self[k] = v
 
     def item(self) -> 'NumAttyDict':
         """get python numbers out of this Tensordict by calling item on all tensors in it.
