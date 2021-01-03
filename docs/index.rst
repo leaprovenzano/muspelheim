@@ -18,6 +18,7 @@
    callbacks
    events
    containers
+   datasets
 
 
 .. toctree::
