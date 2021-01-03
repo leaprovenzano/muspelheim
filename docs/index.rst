@@ -10,6 +10,7 @@
    modules
    activations
    metrics
+   losses
    loop
    transforms
    samplers
