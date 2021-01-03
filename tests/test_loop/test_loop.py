@@ -1,9 +1,28 @@
+from typing import Dict
+
 import numpy as np
 import torch
+
 from torch import nn
 from torch.utils.data import DataLoader
 from hearth.metrics import BinaryAccuracy
 from hearth.loop import Loop
+
+from hearth.modules import BaseModule
+
+from hearth.losses import MultiHeadLoss
+from hearth.containers import TensorDict
+from hearth.datasets import XYDataset
+
+
+class TwoHeadedModel(BaseModule):
+    def __init__(self, in_features=5, n_classes=4):
+        super().__init__()
+        self.class_head = nn.Linear(in_features, 4)
+        self.binary_head = nn.Linear(in_features, 1)
+
+    def forward(self, x: torch.Tensor) -> Dict[str, torch.Tensor]:
+        return {'a': self.class_head(x), 'b': self.binary_head(x)}
 
 
 def gen_xor_dataset(n: int, val_split: float = 0.2):
@@ -40,3 +59,35 @@ def test_full_loop_on_simple_xor():
     assert loop.epoch == 4
     assert loop.stage == 'val'
     assert loop.metric >= 0.9
+
+
+def test_multioutput(mocker):
+    targets = TensorDict(a=torch.randint(4, size=(10,)), b=torch.rand(10, 1).round())
+    inputs = torch.normal(0, 1, size=(10, 5))
+    train = XYDataset(inputs[:8], targets[:8])
+
+    val = XYDataset(inputs[-2:], targets[-2:])
+
+    train_batches = DataLoader(train, batch_size=8, shuffle=True, drop_last=False)
+    val_batches = DataLoader(val, batch_size=8, shuffle=True, drop_last=False)
+
+    model = TwoHeadedModel()
+
+    loop = Loop(
+        model=model,
+        optimizer=torch.optim.AdamW(model.parameters(), lr=0.001),
+        loss_fn=MultiHeadLoss(a=nn.CrossEntropyLoss(), b=nn.BCEWithLogitsLoss()),
+    )
+
+    assert loop._is_multihead_loss
+    assert loop._loss_agg_key == 'weighted_sum'
+
+    x, y = next(iter(train_batches))
+    yhat = model(x)
+    expected_loss = loop.loss_fn(yhat, y)
+    loop.loss_fn.reset()
+
+    spy = mocker.spy(loop, 'backward')
+    loop(train_batches, val_batches, 1)
+
+    spy.assert_called_once_with(expected_loss.weighted_sum)
