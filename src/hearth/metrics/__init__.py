@@ -11,7 +11,7 @@ __all__ = [
     'CategoricalF1',
     'CategoricalAccuracy',
     'MetricStack',
-    'Running',
+    'MultiHeadMetric' 'Running',
 ]
 from .metrics import (
     BinaryAccuracy,
@@ -28,4 +28,4 @@ from .metrics import (
     CategoricalAccuracy,
 )
 from .wrappers import Running
-from .base import Metric, MetricStack
+from .base import Metric, MetricStack, MultiHeadMetric

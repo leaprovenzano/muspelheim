@@ -1,5 +1,5 @@
 import torch
-from typing import Callable
+from typing import Callable, Mapping
 
 
 class Running:
@@ -68,7 +68,10 @@ class Running:
         self._batches_seen += 1
 
     def _get_n_samples(self, y):
-        return y.shape[0]
+        if isinstance(y, torch.Tensor):
+            return y.shape[0]
+        elif isinstance(y, Mapping):
+            return self._get_n_samples(next(iter(y.values())))
 
     def __call__(self, inp, targets, **kwargs):
         res = self.fn(inp, targets, **kwargs)

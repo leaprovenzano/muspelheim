@@ -1,9 +1,10 @@
 from abc import ABC
-from typing import Tuple
+from typing import Tuple, Mapping
 import torch
 from torch import Tensor
 from hearth._internals import to_snakecase
 from hearth.containers import TensorDict
+from hearth._multihead import _MultiHeadFunc
 
 
 class Metric(ABC):
@@ -14,7 +15,7 @@ class Metric(ABC):
         with torch losses and modules)
     """
 
-    def forward(self, inputs: Tensor, target: Tensor, **kwargs) -> Tensor:
+    def forward(self, inputs, target, **kwargs):
         """given call this metric given an input and target and optional keyword arguments.
 
         Args:
@@ -29,7 +30,7 @@ class Metric(ABC):
     def _mask(self, inputs, targets) -> Tuple[Tensor, Tensor]:
         return inputs, targets
 
-    def _prepare(self, inputs: Tensor, targets: Tensor) -> Tuple[Tensor, Tensor]:
+    def _prepare(self, inputs, targets) -> Tuple[Tensor, Tensor]:
         return inputs, targets
 
     def _aggregate(self, result):
@@ -138,3 +139,40 @@ class MetricStack(Metric):
     def __repr__(self):
         _argrepr = ', '.join(f'{f!r}' for f in self._fns.values())
         return f'{self.__class__.__name__}({_argrepr})'
+
+
+class MultiHeadMetric(_MultiHeadFunc):
+    """a wrapper for metrics multi-output models.
+
+    Example:
+        >>> import torch
+        >>> from hearth.metrics import MultiHeadMetric, BinaryAccuracy, CategoricalAccuracy
+        >>> _ = torch.manual_seed(0)
+        >>>
+        >>> metric = MultiHeadMetric(a=BinaryAccuracy(), b=CategoricalAccuracy())
+        >>> metric
+        MultiHeadMetric(a=BinaryAccuracy(mask_target=-1, from_logits=False),
+                        b=CategoricalAccuracy(mask_target=-1))
+
+
+        inputs and targets should be some kind of mapping with head names matching
+        those we specified in our metric.
+
+        output will be a :class:`hearth.containers.TensorDict`
+
+        >>> batch_size = 10
+        >>> inputs = {'a': torch.rand(batch_size, 1),
+        ...           'b': torch.normal(batch_size, 1, size=(10, 4))}
+        >>> targets = {'a': torch.rand(batch_size, 1).round(),
+        ...            'b': torch.randint(4, size=(batch_size,))}
+        >>> metric(inputs, targets)
+        TensorDict({'a': tensor(0.4000), 'b': tensor(0.6000)})
+    """
+
+    def __call__(
+        self, inputs: Mapping[str, Tensor], targets: Mapping[str, Tensor], **kwargs
+    ) -> TensorDict:
+        out = TensorDict()
+        for k, func in self.items():
+            out[k] = func(inputs[k], targets[k], **kwargs)
+        return out

@@ -10,6 +10,7 @@
    modules
    activations
    metrics
+   losses
    loop
    transforms
    samplers
@@ -17,6 +18,7 @@
    callbacks
    events
    containers
+   datasets
 
 
 .. toctree::

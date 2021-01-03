@@ -24,6 +24,14 @@ class TensorDict(NumAttyDict):
             v.to(device)
         return self
 
+    def _idx_tensors(self, idx):
+        return self.__class__({k: v[idx] for k, v in self.items()})
+
+    def __getitem__(self, idx_or_key):
+        if isinstance(idx_or_key, str):
+            return dict.__getitem__(self, idx_or_key)
+        return self._idx_tensors(idx_or_key)
+
     def item(self) -> 'NumAttyDict':
         """get python numbers out of this Tensordict by calling item on all tensors in it.
 
