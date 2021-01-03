@@ -6,6 +6,7 @@ from hearth.callbacks import Callback, CallbackManager
 from hearth.metrics import Running
 from hearth.callbacks import History
 from hearth.metrics import MetricStack
+from hearth.losses import MultiHeadLoss
 
 
 class Loop:
@@ -68,6 +69,8 @@ class Loop:
 
     @loss_fn.setter
     def loss_fn(self, loss_fn=Callable):
+        self._is_multihead_loss = isinstance(loss_fn, MultiHeadLoss)
+        self._loss_agg_key = loss_fn.aggregate_key if self._is_multihead_loss else None
         self._loss_fn = Running(loss_fn)
 
     @property
@@ -103,6 +106,8 @@ class Loop:
         self.callbacks.on_loss_start(self)
         loss = self.compute_loss(yhat, ytru, **kwargs)
         self.callbacks.on_loss_end(self)
+        if self._is_multihead_loss:
+            return loss[self._loss_agg_key]
         return loss
 
     def compute_metric(self, yhat, ytru, **kwargs):
