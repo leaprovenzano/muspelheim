@@ -90,4 +90,8 @@ def test_multioutput(mocker):
     spy = mocker.spy(loop, 'backward')
     loop(train_batches, val_batches, 1)
 
-    spy.assert_called_once_with(expected_loss.weighted_sum)
+    spy.assert_called_once()
+    backward_called_with = spy.call_args[0][0]
+    assert isinstance(backward_called_with, torch.Tensor)
+    torch.testing.assert_allclose(backward_called_with, expected_loss.weighted_sum)
+    assert backward_called_with.grad_fn.name() == expected_loss.weighted_sum.grad_fn.name()
