@@ -1,4 +1,4 @@
-from typing import Optional, Union, Dict, Mapping
+from typing import Optional, Union, Dict, Mapping, List
 
 import torch
 from torch import nn
@@ -106,3 +106,62 @@ class MultiHeadLoss(nn.Module, _MultiHeadFunc):
 
     def __repr__(self):
         return f'{self.__class__.__name__}({self._argrepr()})'
+
+
+class MulticlassFocalLoss(nn.Module):
+    """multiclass focal loss with similar interface to torch CrossentropyLoss.
+
+    **Reference**:
+    `Li et al. : Focal Loss for Dense Object Detection <https://arxiv.org/abs/1708.02002>`_
+    """
+
+    def __init__(
+        self,
+        gamma: float = 2.0,
+        alpha: Optional[Union[torch.Tensor, List[float], float]] = None,
+        ignore_index: int = -1,
+        reduction: str = 'mean',
+    ):
+        super().__init__()
+        self.gamma = gamma
+        self.alpha = alpha
+        self.ignore_index = ignore_index
+        self.reduction = reduction
+
+    @property
+    def alpha(self):
+        return self._alpha
+
+    @alpha.setter
+    def alpha(self, alpha):
+        if alpha is None:
+            alpha = torch.tensor(1.0)
+        elif not isinstance(alpha, torch.Tensor):
+            alpha = torch.tensor(alpha)
+        self.register_buffer('_alpha', alpha)
+
+    def reduce(self, x, mask):
+        if self.reduction == 'mean':
+            return x[mask].mean()
+        elif self.reduction == 'sum':
+            return x[mask].sum()
+        x[~mask] = 0.0
+        return x
+
+    def _get_alphas(self, targets: torch.Tensor, mask: torch.Tensor):
+        alpha = self.alpha
+        if not alpha.shape:
+            return alpha
+        alpha_t = alpha[targets]
+        alpha_t[~mask] = 0.0
+        return alpha_t
+
+    def forward(self, inputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        ce = nn.functional.cross_entropy(
+            inputs, targets, reduction='none', ignore_index=self.ignore_index
+        )
+        mask = targets != self.ignore_index
+        p_t = torch.exp(-ce)
+        alpha_t = self._get_alphas(targets, mask)
+        focal_loss = alpha_t * (1 - p_t) ** self.gamma * ce
+        return self.reduce(focal_loss, mask=mask)
