@@ -120,7 +120,7 @@ class _BaseLoss(nn.Module):
         super().__init__()
         if reduction not in self._reductions:
             raise ValueError(
-                f'reduction {reduction} is not supported for {self.__class__.__name__},'
+                f'reduction {reduction!r} is not supported for {self.__class__.__name__},'
                 f' please choose one of {list(self._reductions)!r}'
             )
         self.reduction = reduction
