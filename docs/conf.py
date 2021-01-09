@@ -275,6 +275,7 @@ html_theme = 'sphinx_material'
 
 
 napoleon_numpy_docstring = False
+napoleon_custom_sections = ['Shape', 'Reference']
 
 autosummary_generate = True
 autodoc_member_order = 'bysource'
