@@ -120,7 +120,7 @@ class _BaseLoss(nn.Module):
         super().__init__()
         if reduction not in self._reductions:
             raise ValueError(
-                f'reduction {reduction} is not supported for {self.__class__.__name__},'
+                f'reduction {reduction!r} is not supported for {self.__class__.__name__},'
                 f' please choose one of {list(self._reductions)!r}'
             )
         self.reduction = reduction
@@ -142,14 +142,14 @@ class _MaskedLoss(_BaseLoss):
 
     def _masked_reduce(self, x, mask: torch.Tensor) -> torch.Tensor:
         if self.reduction == 'none':
-            return x.masked_fill(~mask, 0.0)
+            return x * (mask * 1.0)
         return self._reduce_fn(x[mask])
 
     def _get_mask(self, targets: torch.Tensor) -> torch.Tensor:
         return targets != self.mask_target_value
 
     def extra_repr(self) -> str:
-        return f'mask_target_value={self.mask_target_value}, reduction={self.reduction}'
+        return f'mask_target_value={self.mask_target_value}, reduction={self.reduction!r}'
 
 
 class MulticlassFocalLoss(_MaskedLoss):
@@ -190,7 +190,7 @@ class MulticlassFocalLoss(_MaskedLoss):
         >>> targets = torch.tensor([0, 1, 4, 2, 3, 0, 2, 2])
         >>> loss = MulticlassFocalLoss()
         >>> loss
-        MulticlassFocalLoss(alpha=1.0, gamma=2.0, mask_target_value=-1, reduction=mean)
+        MulticlassFocalLoss(alpha=1.0, gamma=2.0, mask_target_value=-1, reduction='mean')
 
         >>> loss(inp, targets)
         tensor(0.9478)
@@ -217,7 +217,7 @@ class MulticlassFocalLoss(_MaskedLoss):
         >>> loss = MulticlassFocalLoss(alpha=weights, reduction='none')
         >>> loss(inp, masked_targets)
         tensor([[1.8430e-01, 2.7830e+00, 4.0199e-01, 1.6719e-03],
-                [6.7119e-01, 1.2889e+00, 0.0000e+00, 0.0000e+00]])
+                [6.7119e-01, 1.2889e+00, 0.0, 0.0]])
     """
 
     def __init__(
@@ -251,7 +251,7 @@ class MulticlassFocalLoss(_MaskedLoss):
             return self.alpha
 
         alpha_t = self.alpha[targets]
-        return alpha_t.masked_fill(~mask, 0.0)
+        return alpha_t * (mask * 1.0)
 
     def _get_ce(self, inputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         if len(inputs.shape) > 2:
@@ -271,6 +271,90 @@ class MulticlassFocalLoss(_MaskedLoss):
         alpha_t = self._get_alphas(targets, mask)
         focal_loss = alpha_t * (1 - p_t) ** self.gamma * ce
         return self._masked_reduce(focal_loss, mask=mask)
+
+    def extra_repr(self) -> str:
+        parent_args = super().extra_repr()
+        return f'alpha={self.alpha!r}, gamma={self.gamma}, {parent_args}'
+
+
+class BinaryFocalLoss(_MaskedLoss):
+    """Binary focal loss.
+
+    Focal loss is a proposed solution for handling class imbalambce in segmentation.
+
+    Reference:
+       `Li et al. : Focal Loss for Dense Object Detection <https://arxiv.org/abs/1708.02002>`_
+
+    Args:
+        alpha: class weighting factor. Defaults to 0.25 (defaults taken from paper).
+        gamma: focusing factor. Defaults to 2.0 (default taken from paper).
+        mask_target_value: this index will be masked when seen in the targets upon
+            computing the loss. Defaults to -1.
+        reduction: string name of reduction. Defaults to 'mean'.
+
+    Shape:
+        - inputs: :math:`(N, *)` where :math:`*` means, any number of additional dimensions\
+            if inputs have an extra single dimension thats ok... they will be reshaped as targets.
+        - targets: :math:`(N, *)`.
+        - output: scalar unless :attr:`reduction` is ``'none'``, then :math:`(N, *)`, same shape as\
+            targets.
+
+    Example:
+        >>> import torch
+        >>> from hearth.losses import BinaryFocalLoss
+        >>>
+        >>> targets = torch.tensor([0, 1, 0, 0, 1, 0], dtype=torch.float32)
+        >>> inputs = torch.tensor([-1.1645,  -0.2928, -0.5685, -0.8038, -0.0211,  2.0062])
+        >>> loss = BinaryFocalLoss()
+        >>> loss
+        BinaryFocalLoss(alpha=0.25, gamma=2.0, mask_target_value=-1, reduction='mean')
+
+        >>> loss(inputs, targets)
+        tensor(0.2399)
+
+        if your inputs have an extra dim thats ok:
+
+        >>> loss(inputs.unsqueeze(-1), targets)
+        tensor(0.2399)
+
+        supports masking by value for instance if we want to predict a binary value over time and \
+        the last timestep for the last example is missing, we can mask by setting \
+        :attr:`mask_target_value` to -1 and padding targets with -1:
+
+        >>> masked_targets =  torch.tensor([[0, 1, 0], [0, 1, -1]], dtype=torch.float32)
+        >>> inputs = inputs.reshape((2, 3, -1)) # (batch, time, 1)
+        >>> loss(inputs, masked_targets)
+        tensor(0.0393)
+
+        when :attr:`reduction` is ``'none'`` we will return one loss value per step as you can see\
+         the masked targets are 0.0:
+
+        >>> loss = BinaryFocalLoss(reduction='none')
+        >>> loss(inputs, masked_targets)
+        tensor([[0.0115, 0.0697, 0.0440],
+                [0.0265, 0.0449, 0.0000]])
+    """
+
+    def __init__(
+        self,
+        alpha: float = 0.25,
+        gamma: float = 2.0,
+        mask_target_value: int = -1,
+        reduction: str = 'mean',
+    ):
+        super().__init__(mask_target_value=mask_target_value, reduction=reduction)
+        self.gamma = gamma
+        self.alpha = alpha
+
+    def forward(self, inputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        inputs = inputs.reshape_as(targets)
+        bce = torch.nn.functional.binary_cross_entropy_with_logits(
+            inputs, targets, reduction="none"
+        )
+        a_t = (1 - self.alpha) + targets * (2 * self.alpha - 1)
+        p_t = torch.exp(-bce)
+        focal = a_t * (1 - p_t) ** self.gamma * bce
+        return self._masked_reduce(focal, mask=self._get_mask(targets))
 
     def extra_repr(self) -> str:
         parent_args = super().extra_repr()
