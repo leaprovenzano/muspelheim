@@ -7,6 +7,7 @@ from hearth.metrics import Running
 from hearth.callbacks import History
 from hearth.metrics import MetricStack
 from hearth.losses import MultiHeadLoss
+from hearth.optimizers import LazyOptimizer
 
 
 class Loop:
@@ -41,6 +42,16 @@ class Loop:
         self.callbacks = CallbackManager(self.history, *callbacks)
         self.callbacks.on_registration(self)
         self.epoch = self.history.last_epoch + 1 if len(self.history) else 0
+
+    @property
+    def optimizer(self):
+        return self._optimizer
+
+    @optimizer.setter
+    def optimizer(self, optimizer):
+        if isinstance(optimizer, LazyOptimizer) and not optimizer.initialized:
+            optimizer.add_model(self.model)
+        self._optimizer = optimizer
 
     @property
     def metrics(self):
