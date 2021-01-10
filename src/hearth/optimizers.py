@@ -6,10 +6,6 @@ from hearth.grad import trainable_parameters, named_trainable_parameters
 from more_itertools import partition
 
 
-def build_param_group(params, **kwargs):
-    return {'params': params, **kwargs}
-
-
 def _is_bias_namedparam(x):
     return x[0].endswith('bias')
 
