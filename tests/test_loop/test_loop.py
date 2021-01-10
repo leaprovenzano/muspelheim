@@ -13,6 +13,7 @@ from hearth.modules import BaseModule
 from hearth.losses import MultiHeadLoss
 from hearth.containers import TensorDict
 from hearth.datasets import XYDataset
+from hearth.optimizers import AdamW
 
 
 class TwoHeadedModel(BaseModule):
@@ -50,7 +51,7 @@ def test_full_loop_on_simple_xor():
 
     loop = Loop(
         model=model,
-        optimizer=torch.optim.AdamW(model.parameters(), lr=0.001),
+        optimizer=AdamW(lr=0.001),
         loss_fn=nn.BCELoss(),
         metrics=BinaryAccuracy(),
     )
@@ -75,7 +76,7 @@ def test_multioutput(mocker):
 
     loop = Loop(
         model=model,
-        optimizer=torch.optim.AdamW(model.parameters(), lr=0.001),
+        optimizer=AdamW(lr=0.001),
         loss_fn=MultiHeadLoss(a=nn.CrossEntropyLoss(), b=nn.BCEWithLogitsLoss()),
     )
 

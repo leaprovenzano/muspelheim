@@ -19,6 +19,7 @@
    events
    containers
    datasets
+   optimizers
 
 
 .. toctree::
