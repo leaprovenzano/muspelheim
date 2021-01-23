@@ -2,7 +2,7 @@ from typing import Iterator, Tuple
 from torch import nn
 
 
-def freeze(model: nn.Module):
+def freeze(model: nn.Module) -> nn.Module:
     """freeze a model in place
 
     Args:
@@ -10,9 +10,10 @@ def freeze(model: nn.Module):
     """
     for param in model.parameters():
         param.requires_grad = False
+    return model
 
 
-def unfreeze(model: nn.Module):
+def unfreeze(model: nn.Module) -> nn.Module:
     """unfreeze a model in place
 
     Args:
@@ -20,6 +21,17 @@ def unfreeze(model: nn.Module):
     """
     for param in model.parameters():
         param.requires_grad = True
+    return model
+
+
+def allgrad(model: nn.Module) -> bool:
+    """return true if all parameters in the model require grad."""
+    return all(p.requires_grad for p in model.parameters())
+
+
+def anygrad(model: nn.Module) -> bool:
+    """return true if any parameters in the model require grad."""
+    return any(p.requires_grad for p in model.parameters())
 
 
 def requires_grad(param: nn.Parameter) -> bool:

@@ -144,7 +144,7 @@ class AdamW(LazyOptimizer):
         >>> model = nn.Sequential(nn.Linear(4, 5),
         ...                       nn.Linear(5, 6),
         ...                       nn.Linear(6, 7))
-        >>> freeze(model[0])
+        >>> _=freeze(model[0])
         >>> opt.add_model(model)
         >>> opt.get_lrs()
         [0.1, 0.1]
@@ -153,7 +153,7 @@ class AdamW(LazyOptimizer):
         and add that to our optimizer with a different learning
         rate:
 
-        >>> unfreeze(model[0])
+        >>> _=unfreeze(model[0])
         >>> opt.add_model(model[0], lr=.01)
         >>> opt.get_lrs()
         [0.1, 0.1, 0.01, 0.01]
@@ -219,7 +219,7 @@ class Adadelta(LazyOptimizer):
         >>> model = nn.Sequential(nn.Linear(4, 5),
         ...                       nn.Linear(5, 6),
         ...                       nn.Linear(6, 7))
-        >>> freeze(model[0])
+        >>> _ =freeze(model[0])
         >>> opt.add_model(model)
         >>> opt.get_lrs()
         [0.1]
@@ -227,7 +227,7 @@ class Adadelta(LazyOptimizer):
         later we may unfreeze the first layer of our model and add that to our optimizer with a
         different learning rate:
 
-        >>> unfreeze(model[0])
+        >>> _ = unfreeze(model[0])
         >>> opt.add_model(model[0], lr=.01)
         >>> opt.get_lrs()
         [0.1, 0.01]
@@ -272,7 +272,7 @@ class Adagrad(LazyOptimizer):
         >>> model = nn.Sequential(nn.Linear(4, 5),
         ...                       nn.Linear(5, 6),
         ...                       nn.Linear(6, 7))
-        >>> freeze(model[0])
+        >>> _ =freeze(model[0])
         >>> opt.add_model(model)
         >>> opt.get_lrs()
         [0.1]
@@ -280,7 +280,7 @@ class Adagrad(LazyOptimizer):
         later we may unfreeze the first layer of our model and add that to our optimizer with a
         different learning rate:
 
-        >>> unfreeze(model[0])
+        >>> _ =unfreeze(model[0])
         >>> opt.add_model(model[0], lr=.01)
         >>> opt.get_lrs()
         [0.1, 0.01]
@@ -348,7 +348,7 @@ class Adam(LazyOptimizer):
         >>> model = nn.Sequential(nn.Linear(4, 5),
         ...                       nn.Linear(5, 6),
         ...                       nn.Linear(6, 7))
-        >>> freeze(model[0])
+        >>> _ = freeze(model[0])
         >>> opt.add_model(model)
         >>> opt.get_lrs()
         [0.1]
@@ -356,7 +356,7 @@ class Adam(LazyOptimizer):
         later we may unfreeze the first layer of our model and add that to our optimizer with a
         different learning rate:
 
-        >>> unfreeze(model[0])
+        >>> _ =unfreeze(model[0])
         >>> opt.add_model(model[0], lr=.01)
         >>> opt.get_lrs()
         [0.1, 0.01]
@@ -424,7 +424,7 @@ class ASGD(LazyOptimizer):
         >>> model = nn.Sequential(nn.Linear(4, 5),
         ...                       nn.Linear(5, 6),
         ...                       nn.Linear(6, 7))
-        >>> freeze(model[0])
+        >>> _ =freeze(model[0])
         >>> opt.add_model(model)
         >>> opt.get_lrs()
         [0.1]
@@ -432,7 +432,7 @@ class ASGD(LazyOptimizer):
         later we may unfreeze the first layer of our model and add that to our optimizer with a
         different learning rate:
 
-        >>> unfreeze(model[0])
+        >>> _ =unfreeze(model[0])
         >>> opt.add_model(model[0], lr=.01)
         >>> opt.get_lrs()
         [0.1, 0.01]
@@ -502,7 +502,7 @@ class RMSprop(LazyOptimizer):
         >>> model = nn.Sequential(nn.Linear(4, 5),
         ...                       nn.Linear(5, 6),
         ...                       nn.Linear(6, 7))
-        >>> freeze(model[0])
+        >>> _ = freeze(model[0])
         >>> opt.add_model(model)
         >>> opt.get_lrs()
         [0.1]
@@ -510,7 +510,7 @@ class RMSprop(LazyOptimizer):
         later we may unfreeze the first layer of our model and add that to our optimizer with a
         different learning rate:
 
-        >>> unfreeze(model[0])
+        >>> _= unfreeze(model[0])
         >>> opt.add_model(model[0], lr=.01)
         >>> opt.get_lrs()
         [0.1, 0.01]
@@ -572,7 +572,7 @@ class SGD(LazyOptimizer):
         >>> model = nn.Sequential(nn.Linear(4, 5),
         ...                       nn.Linear(5, 6),
         ...                       nn.Linear(6, 7))
-        >>> freeze(model[0])
+        >>> _=freeze(model[0])
         >>> opt.add_model(model)
         >>> opt.get_lrs()
         [0.1]
@@ -580,7 +580,7 @@ class SGD(LazyOptimizer):
         later we may unfreeze the first layer of our model and add that to our optimizer with a
         different learning rate:
 
-        >>> unfreeze(model[0])
+        >>> _=unfreeze(model[0])
         >>> opt.add_model(model[0], lr=.01)
         >>> opt.get_lrs()
         [0.1, 0.01]
